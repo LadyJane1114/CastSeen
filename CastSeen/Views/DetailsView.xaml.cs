@@ -1,4 +1,5 @@
-﻿using CastSeen.ViewModels;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,17 +11,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CastSeen
+namespace CastSeen.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for DetailsView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class DetailsView : UserControl
     {
-        public MainWindow()
+        public DetailsView()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
         }
     }
 }

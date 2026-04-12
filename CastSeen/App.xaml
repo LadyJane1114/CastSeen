@@ -2,8 +2,27 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:CastSeen"
+             xmlns:vm="clr-namespace:CastSeen.ViewModels"
+             xmlns:views="clr-namespace:CastSeen.Views"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type vm:HomeViewModel}">
+                <views:HomeView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:MoviesViewModel}">
+                <views:MoviesView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ActorsViewModel}">
+                <views:ActorsView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DetailsViewModel}">
+                <views:DetailsView/>
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
