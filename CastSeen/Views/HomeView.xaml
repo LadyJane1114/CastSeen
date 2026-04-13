@@ -7,26 +7,65 @@
              xmlns:vm="clr-namespace:CastSeen.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <vm:HomeViewModel/>
-    </UserControl.DataContext>
+    
     <Grid Margin="20">
         <StackPanel>
-            <TextBlock Text="Welcome to CastSeen!" Foreground="{StaticResource col_foreground}" FontSize="40" FontFamily="{StaticResource font_headers}" Margin="0,0,0,20"/>
-            <TextBlock Text="Explore the database to find when you've seen that actor before." Foreground="{StaticResource col_muted_foreground}" FontSize="18" FontFamily="{StaticResource font_text}" Margin="0,0,0,20" TextWrapping="Wrap"/>
+            <StackPanel Orientation="Horizontal">
+                <Path Data="{StaticResource icon_star}" Width="14" Height="14" Stretch="Uniform" Fill="{StaticResource col_muted_foreground}" Margin="0,0,8,0"/>
+                <TextBlock Text="A Desktop Movie Database Experience" Foreground="{StaticResource col_muted_foreground}" FontFamily="{StaticResource font_text}" FontSize="14"/>
+                <Path Data="{StaticResource icon_star}" Width="14" Height="14" Stretch="Uniform" Fill="{StaticResource col_muted_foreground}" Margin="8,0,0,0"/>
+            </StackPanel>
 
-            <Border Background="{StaticResource col_card}" Padding="20" CornerRadius="8" Margin="0,0,0,10">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Total Movies: " Foreground="{StaticResource col_foreground}" FontSize="20" FontFamily="{StaticResource font_text}" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding TotalMovies}" Foreground="{StaticResource col_primary}" FontSize="20" FontFamily="{StaticResource font_text}"/>
-                </StackPanel>
-            </Border>
-            <Border Background="{StaticResource col_card}" Padding="20" CornerRadius="8">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Total Actors: " Foreground="{StaticResource col_foreground}" FontSize="20" FontFamily="{StaticResource font_text}" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding TotalActors}" Foreground="{StaticResource col_primary}" FontSize="20" FontFamily="{StaticResource font_text}"/>
-                </StackPanel>
-            </Border>
+            <TextBlock FontSize="38" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}">
+                Cast<Run Foreground="{StaticResource col_primary}" FontStyle="Italic" FontSize="40">Seen</Run>
+            </TextBlock>
+            
+            <Border Height="1" Background="{StaticResource col_muted}" Margin="16,5"/>
+
+            <TextBlock Foreground="{StaticResource col_muted_foreground}" FontSize="16" FontFamily="{StaticResource font_text}" Margin="0,0,0,20" TextWrapping="Wrap">
+                For when you've definitely seen that actor <Run FontStyle="Italic" Foreground="{StaticResource col_primary}">somewhere</Run> before. <LineBreak/>
+                Browse movies, explore actors, and discover connections across cinema.
+            </TextBlock>
+
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Browse Movies" Command="{Binding GoToMoviesCommand}" Style="{StaticResource HomePrimaryButtonStyle}" Margin="0,0,12,0"/>
+                <Button Content="Explore Actors" Command="{Binding GoToActorsCommand}" Style="{StaticResource HomeDarkButtonStyle}"/>
+            </StackPanel>
+
+            <Border Height="1" Background="{StaticResource col_muted}" Margin="16,10"/>
+
+            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                <Border Background="{StaticResource col_card}" Padding="16" CornerRadius="8">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{StaticResource icon_film}" Width="24" Height="24" Stretch="Uniform" Fill="{StaticResource col_primary}" Margin="0,0,10,0"/>
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="{Binding TotalMovies}" Foreground="{StaticResource col_foreground}" FontSize="14"/>
+                            <TextBlock Text="Movies" Foreground="{StaticResource col_muted_foreground}" FontSize="14" FontFamily="{StaticResource font_text}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                
+                <Border Background="{StaticResource col_card}" Padding="16" CornerRadius="8" Margin="10,0,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{StaticResource icon_actors}" Width="24" Height="24" Stretch="Uniform" Fill="{StaticResource col_primary}" Margin="0,0,10,0"/>
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="{Binding TotalActors}" Foreground="{StaticResource col_foreground}" FontSize="14"/>
+                            <TextBlock Text="Actors" Foreground="{StaticResource col_muted_foreground}" FontSize="14" FontFamily="{StaticResource font_text}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{StaticResource col_card}" Padding="16" CornerRadius="8" Margin="10,0,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{StaticResource icon_genre}" Width="24" Height="24" Stretch="Uniform" Fill="{StaticResource col_primary}" Margin="0,0,10,0"/>
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="{Binding TotalGenres}" Foreground="{StaticResource col_foreground}" FontSize="14"/>
+                            <TextBlock Text="Genres" Foreground="{StaticResource col_muted_foreground}" FontSize="14" FontFamily="{StaticResource font_text}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -48,9 +48,9 @@ namespace CastSeen.ViewModels
 
         public MainViewModel()
         {
-            NavToHomeCommand = new RelayCommand(() => Navigate(() => new HomeView()));
-            NavToMoviesCommand = new RelayCommand(() => Navigate(() => new MoviesView()));
-            NavToActorsCommand = new RelayCommand(() => Navigate(() => new ActorsView()));
+            NavToHomeCommand = new RelayCommand(() => Navigate(() => new HomeViewModel(this)));
+            NavToMoviesCommand = new RelayCommand(() => Navigate(() => new MoviesViewModel()));
+            NavToActorsCommand = new RelayCommand(() => Navigate(() => new ActorsViewModel()));
             ReturnCommand = new RelayCommand(() => Return());
             ExitCommand = new RelayCommand(() => App.Current.Shutdown());
 
@@ -76,7 +76,7 @@ namespace CastSeen.ViewModels
                 }
             };
 
-            CurrentViewModel = new HomeView();
+            CurrentViewModel = new HomeViewModel(this);
         }
 
         public ICommand NavToHomeCommand { get; }
@@ -110,7 +110,7 @@ namespace CastSeen.ViewModels
             if (_history.Count > 0)
                 CurrentViewModel = _history.Pop();
             else
-                CurrentViewModel = new HomeView();
+                CurrentViewModel = new HomeViewModel(this);
         }
 
         private void OnPropertyChanged(string propertyName)
