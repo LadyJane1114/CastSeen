@@ -11,23 +11,39 @@
             <TextBlock FontSize="24" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}">
                 Cast<Run Foreground="{StaticResource col_primary}" FontStyle="Italic" FontSize="26">Seen</Run>
             </TextBlock>
-            <TextBlock Text="For when you've seen that actor before..." FontSize="11" FontFamily="{StaticResource font_text}" Foreground="{StaticResource col_secondary}" TextWrapping="Wrap"/>
+            <TextBlock Text="For when you've seen that actor before..." FontSize="10" FontFamily="{StaticResource font_text}" Foreground="{StaticResource col_accent}" TextWrapping="Wrap"/>
         </StackPanel>
 
         <Border Height="1" Background="{StaticResource col_muted}" Margin="16,2"/>
 
-        <ListBox ItemsSource="{Binding NavItems}" Background="{StaticResource col_card}" BorderThickness="0">
+        <ListBox ItemsSource="{Binding NavItems}" 
+                 SelectedItem="{Binding SelectedNavItem}"
+                 Background="{StaticResource col_card}" 
+                 BorderThickness="0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Button Command="{Binding Command}" Background="Transparent" BorderThickness="0" Padding="8">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Icon}" Width="16" Height="16"/>
-                            <TextBlock Text="{Binding Label}" Margin="8,0,0,0" Foreground="{StaticResource col_foreground}"/>
-                        </StackPanel>
-                    </Button>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{Binding Icon}" 
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Foreground}" 
+                              Width="16" 
+                              Height="16" 
+                              Stretch="Uniform"
+                              Margin="8"/>
+                        <TextBlock Text="{Binding Label}" Margin="8" Foreground="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Foreground}" Padding="5"/>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
+        <Border Height="1" Background="{StaticResource col_muted}" Margin="16,2"/>
+
+        <Button Command="{Binding ExitCommand}" Style="{StaticResource SidebarButtonStyle}" Width="96" Margin="8" Padding="6">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Path Data="M216-144q-29.7 0-50.85-21.15Q144-186.3 144-216v-168h72v168h528v-528H216v168h-72v-168q0-29.7 21.15-50.85Q186.3-816 216-816h528q29.7 0 50.85 21.15Q816-773.7 816-744v528q0 29.7-21.15 50.85Q773.7-144 744-144H216Zm216-144-51-51 105-105H144v-72h342L381-621l51-51 192 192-192 192Z"
+                      Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                      Width="16" Height="16" Stretch="Uniform" Margin="0,0,8,0" />
+                <TextBlock Text="Exit" Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
     </StackPanel>
 </UserControl>
