@@ -112,7 +112,7 @@ namespace CastSeen.ViewModels
             _ = LoadDataAsync();
         }
 
-        private bool CanNextPage() => !IsLoading;
+        private bool CanNextPage() => !IsLoading && MatchingActors >= PageSize;
 
         private void PreviousPage()
         {
@@ -132,7 +132,6 @@ namespace CastSeen.ViewModels
         public async System.Threading.Tasks.Task SearchAsync(string searchTerm)
         {
             _searchTerm = searchTerm;
-            _currentPage = 0;
             IsLoading = true;
 
             try
@@ -163,7 +162,8 @@ namespace CastSeen.ViewModels
                     .ToListAsync();
 
                 Actors.Clear();
-                TotalActors = context.Names.Count(n => n.PrimaryProfession != null && n.PrimaryProfession.Contains("actor"));
+                TotalActors = context.Names.Count(n => (string.IsNullOrWhiteSpace(searchTerm) || n.PrimaryName!.Contains(searchTerm)) &&
+                                                       n.PrimaryProfession != null && n.PrimaryProfession.Contains("actor"));
                 foreach (var actor in actors)
                 {
                     Actors.Add(actor);

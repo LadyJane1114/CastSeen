@@ -101,7 +101,7 @@ namespace CastSeen.ViewModels
             _ = LoadDataAsync();
         }
 
-        private bool CanNextPage() => !IsLoading;
+        private bool CanNextPage() => !IsLoading && MatchingMovies >= PageSize;
 
         private void PreviousPage()
         {
@@ -121,8 +121,6 @@ namespace CastSeen.ViewModels
         public async Task SearchAsync(string searchTerm)
         {
             _searchTerm = searchTerm;
-            _currentPage = 0;
-            IsLoading = true;
             IsLoading = true;
             try
             {
@@ -159,6 +157,9 @@ namespace CastSeen.ViewModels
                     .ToListAsync();
 
                 Movies.Clear();
+                TotalMovies = context.Titles.Count(t =>
+                    (string.IsNullOrWhiteSpace(searchTerm) || t.PrimaryTitle!.Contains(searchTerm))
+                    && t.TitleType == "movie");
                 foreach (var movie in movies)
                 {
                     Movies.Add(movie);
