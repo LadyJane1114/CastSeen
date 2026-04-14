@@ -1,7 +1,10 @@
 ﻿using CastSeen.Commands;
 using CastSeen.Data;
 using CastSeen.Models;
+using CastSeen.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace CastSeen_UnitTest;
 
@@ -104,5 +107,67 @@ public sealed class CastSeenUnitTests
         using var context = new ImdbContext(options);
 
         Assert.IsNotNull(context.Model);
+    }
+
+    [TestMethod]
+    public void ActorDisplay_Initials_SingleName_ReturnsFirstLetter()
+    {
+        var display = new ActorsViewModel.ActorDisplay
+        {
+            Name = "Madonna"
+        };
+
+        Assert.AreEqual("M", display.Initials);
+    }
+
+    [TestMethod]
+    public void ActorDisplay_Initials_MultiPartName_ReturnsFirstAndLastInitials()
+    {
+        var display = new ActorsViewModel.ActorDisplay
+        {
+            Name = "Robert Downey"
+        };
+
+        Assert.AreEqual("RD", display.Initials);
+    }
+
+    [TestMethod]
+    public void ActorsViewModel_CanPreviousPage_ReturnsFalseOnFirstPage()
+    {
+        var viewModel = CreateUninitializedActorsViewModel();
+        SetPrivateField(viewModel, "_currentPage", 0);
+
+        var result = InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
+
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public void ActorsViewModel_CanPreviousPage_ReturnsTrueAfterPagingBack()
+    {
+        var viewModel = CreateUninitializedActorsViewModel();
+        SetPrivateField(viewModel, "_currentPage", 1);
+
+        var result = InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
+
+        Assert.IsTrue(result);
+    }
+
+    private static ActorsViewModel CreateUninitializedActorsViewModel()
+        => (ActorsViewModel)FormatterServices.GetUninitializedObject(typeof(ActorsViewModel));
+
+    private static void SetPrivateField<T>(object instance, string fieldName, T value)
+    {
+        var field = instance.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(field);
+        field.SetValue(instance, value);
+    }
+
+    private static bool InvokePrivateBoolMethod(object instance, string methodName)
+    {
+        var method = instance.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(method);
+
+        return (bool)method.Invoke(instance, null)!;
     }
 }
