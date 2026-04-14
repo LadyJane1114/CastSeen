@@ -14,6 +14,11 @@ namespace CastSeen.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public DetailsViewModel(MainViewModel mainViewModel, DetailsNavigationRequest request)
+            : this(mainViewModel, request, true)
+        {
+        }
+
+        internal DetailsViewModel(MainViewModel mainViewModel, DetailsNavigationRequest request, bool loadDetails)
         {
             Request = request;
             BackCommand = mainViewModel.ReturnCommand;
@@ -30,7 +35,10 @@ namespace CastSeen.ViewModels
                 MovieSectionVisibility = Visibility.Visible;
             }
 
-            _ = LoadDetailsAsync(request);
+            if (loadDetails)
+            {
+                _ = LoadDetailsAsync(request);
+            }
         }
 
         public DetailsNavigationRequest Request { get; }
