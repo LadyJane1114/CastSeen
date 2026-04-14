@@ -169,6 +169,55 @@
         </Setter>
     </Style>
 
+    <!--Filter buttons-->
+    <Style x:Key="FilterButtonStyle" TargetType="Button" BasedOn="{StaticResource SidebarButtonStyle}">
+        <Setter Property="Background" Value="{StaticResource col_burgundy_light}" />
+        <Setter Property="Foreground" Value="{StaticResource col_foreground}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="5,0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Width" Value="75" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd"
+                     Background="{TemplateBinding Background}"
+                     CornerRadius="8"
+                     Padding="{TemplateBinding Padding}"
+                     SnapsToDevicePixels="True">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="6" ShadowDepth="0" Opacity="0.25" />
+                        </Border.Effect>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource col_muted}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource col_borders}" />
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.95" />
+                        </Trigger>
+                        
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource col_muted_foreground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!--Search Bar-->
+    <Style x:Key="SearchBarStyle" TargetType="TextBox">
+        <Setter Property="Background" Value="{StaticResource col_secondary}" />
+        <Setter Property="Foreground" Value="{StaticResource col_foreground}" />
+        <Setter Property="Padding" Value="6,2" />
+        <Setter Property="BorderBrush" Value="{StaticResource col_borders}" />
+        <Setter Property="BorderThickness" Value="1" />
+        
+    </Style>
+
     
     
     

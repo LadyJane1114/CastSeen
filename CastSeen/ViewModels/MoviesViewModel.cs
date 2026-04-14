@@ -18,6 +18,9 @@ namespace CastSeen.ViewModels
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         public ObservableCollection<MovieDisplay> Movies { get; } = new ObservableCollection<MovieDisplay>();
+        public ObservableCollection<string> Genres { get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> TopGenres { get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> OtherGenres { get; } = new ObservableCollection<string>();
 
         private int _currentPage = 0;
         private const int PageSize = 50;
@@ -31,6 +34,20 @@ namespace CastSeen.ViewModels
         }
         
         private string _searchTerm = string.Empty;
+        private string? _selectedGenre;
+
+        public string? SelectedGenre
+        {
+            get => _selectedGenre;
+            set
+            {
+                if (_selectedGenre == value) return;
+                _selectedGenre = value;
+                OnPropertyChanged(nameof(SelectedGenre));
+                _currentPage = 0;
+                _ = SearchAsync(SearchQuery);
+            }
+        }
         
         public string SearchQuery
         {
@@ -63,6 +80,7 @@ namespace CastSeen.ViewModels
         public ICommand NextPageCommand { get; }
         public ICommand PreviousPageCommand { get; }
         public ICommand OpenMovieCommand { get; }
+        public ICommand SelectGenreCommand { get; }
 
         public MoviesViewModel(MainViewModel mainViewModel)
         {
@@ -70,6 +88,7 @@ namespace CastSeen.ViewModels
             NextPageCommand = new RelayCommand(NextPage, CanNextPage);
             PreviousPageCommand = new RelayCommand(PreviousPage, CanPreviousPage);
             OpenMovieCommand = new RelayCommand<MovieDisplay>(OpenMovie);
+            SelectGenreCommand = new RelayCommand<string>(SelectGenre);
 
             _ = LoadDataAsync();
         }
@@ -91,6 +110,40 @@ namespace CastSeen.ViewModels
         {
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
                 return;
+
+            if (!Genres.Any())
+            {
+                try
+                {
+                    using var context = new ImdbContext();
+                    var genreList = await context.Genres
+                        .OrderBy(g => g.Name)
+                        .Select(g => g.Name)
+                        .ToListAsync();
+
+                    Genres.Clear();
+                    TopGenres.Clear();
+                    OtherGenres.Clear();
+
+                    Genres.Add("All Genres");
+                    foreach (var g in genreList) Genres.Add(g);
+
+                    var top = genreList.Take(4).ToList();
+                    foreach (var g in top) TopGenres.Add(g);
+
+                    var other = genreList.Skip(4).ToList();
+                    OtherGenres.Add("Other Genres");
+                    foreach (var g in other) OtherGenres.Add(g);
+                    
+                    _selectedGenre = "All Genres";
+                    OnPropertyChanged(nameof(SelectedGenre));
+                }
+                catch
+                {
+                    //TODO: Should probably be better
+                    MessageBox.Show("Failed to load genres");
+                }
+            }
 
             _ = SearchAsync(SearchQuery);
         }
@@ -118,6 +171,11 @@ namespace CastSeen.ViewModels
             _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Movie, movie.TitleId));
         }
         
+        private void SelectGenre(string genre)
+        {
+            SelectedGenre = genre;
+        }
+
         public async Task SearchAsync(string searchTerm)
         {
             _searchTerm = searchTerm;
@@ -125,9 +183,16 @@ namespace CastSeen.ViewModels
             try
             {
                 using var context = new ImdbContext();
-                var movies = await context.Titles
+                var query = context.Titles
                     .AsNoTracking()
-                    .Where(t => (string.IsNullOrWhiteSpace(searchTerm) || t.PrimaryTitle!.Contains(searchTerm)) && t.TitleType == "movie")
+                    .Where(t => (string.IsNullOrWhiteSpace(searchTerm) || t.PrimaryTitle!.Contains(searchTerm)) && t.TitleType == "movie");
+
+                if (!string.IsNullOrEmpty(SelectedGenre) && SelectedGenre != "All Genres" && SelectedGenre != "Other Genres")
+                {
+                    query = query.Where(t => t.Genres.Any(g => g.Name == SelectedGenre));
+                }
+
+                var movies = await query
                     .OrderBy(t => t.TitleId)
                     .Skip(_currentPage * PageSize)
                     .Take(PageSize)
@@ -152,14 +217,11 @@ namespace CastSeen.ViewModels
                             .Distinct()
                             .Take(3)
                             .ToList()
-                            .ToList()
                     })
                     .ToListAsync();
 
                 Movies.Clear();
-                TotalMovies = context.Titles.Count(t =>
-                    (string.IsNullOrWhiteSpace(searchTerm) || t.PrimaryTitle!.Contains(searchTerm))
-                    && t.TitleType == "movie");
+                TotalMovies = await query.CountAsync();
                 foreach (var movie in movies)
                 {
                     Movies.Add(movie);

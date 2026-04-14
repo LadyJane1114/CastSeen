@@ -7,12 +7,12 @@
              xmlns:vm="clr-namespace:CastSeen.ViewModels"
              xmlns:helper="clr-namespace:CastSeen.Helpers"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Background="{StaticResource col_background}">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -27,11 +27,55 @@
             <Border Height="1" Background="{StaticResource col_muted}" Margin="16,5"/>
         </StackPanel>
         
-        <!--Search Bar-->
-        <StackPanel x:Name="SearchStackPanel" Grid.Row="1" Orientation="Vertical">
-            <TextBox  helper:TextBoxHelper.Placeholder="🔍 Search by actor name" Style="{StaticResource ResourceKey=SearchBarStyle}"
-                      x:Name="SearchBar"  Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Height="{Binding Height, ElementName=SearchStackPanel}" Width="{Binding Width, ElementName=Divider}"/>
-        </StackPanel>
+        <!--Search Bar and Genre Filter-->
+        <Grid Grid.Row="1" Margin="0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!--Grey area behind search-->
+            <Border Padding="10, 0" Background="{StaticResource col_muted}" Margin="0,0,10,0">
+                <StackPanel x:Name="SearchStackPanel" Orientation="Vertical" VerticalAlignment="Center">
+                    <TextBox helper:TextBoxHelper.Placeholder="🔍 Search movie by title...." 
+                             Style="{StaticResource ResourceKey=SearchBarStyle}"
+                             x:Name="SearchBar" 
+                             Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" 
+                             Height="30"/>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Content="All" 
+                        Command="{Binding SelectGenreCommand}" 
+                        CommandParameter="All Genres"
+                        Style="{StaticResource FilterButtonStyle}"
+                        />
+                
+                <ItemsControl ItemsSource="{Binding TopGenres}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding}" 
+                                    Command="{Binding DataContext.SelectGenreCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource HomeDarkButtonStyle}"
+                                    Margin="0,0,5,0" Padding="10,2"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ComboBox ItemsSource="{Binding OtherGenres}" 
+                          SelectedItem="{Binding SelectedGenre}"
+                          Width="150" Height="30"
+                          VerticalContentAlignment="Center"
+                          Style="{StaticResource {x:Type ComboBox}}"/>
+            </StackPanel>
+        </Grid>
 
         <StackPanel Grid.Row="2" Orientation="Vertical">
             <!--Showing x of y movies-->
@@ -41,7 +85,7 @@
                 <TextBlock Text="{Binding Path=MatchingMovies}"
                            VerticalAlignment="Center"
                            Foreground="{StaticResource col_foreground}"/>
-                <TextBlock Text="of " Foreground="{StaticResource col_muted_foreground}"/>
+                <TextBlock Text=" of " Foreground="{StaticResource col_muted_foreground}"/>
                 <!--Data-->
                 <TextBlock Text="{Binding Path=TotalMovies}" VerticalAlignment="Center" 
                            Foreground="{StaticResource col_foreground}"/>

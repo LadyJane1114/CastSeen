@@ -12,7 +12,7 @@
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="55"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -26,13 +26,17 @@
                        Margin="0,6,0,0"/>
             <Border x:Name="Divider"  Height="1" Background="{StaticResource col_muted}" Margin="16,5"/>
         </StackPanel>
-
-        <!--Search Bar-->
-        <StackPanel x:Name="SearchStackPanel" Grid.Row="1" Orientation="Vertical">
-            <TextBox  helper:TextBoxHelper.Placeholder="🔍 Search by actor name" Style="{StaticResource ResourceKey=SearchBarStyle}"
-                      x:Name="SearchBar"  Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Height="{Binding Height, ElementName=SearchStackPanel}" Width="{Binding Width, ElementName=Divider}"/>
-        </StackPanel>
         
+        <!--Grey area behind search-->
+        <Border Grid.Row="1" Margin="10, 0" Padding="10, 0" Background="{StaticResource col_muted}">
+        <!--Search Bar-->
+            <StackPanel x:Name="SearchStackPanel" Orientation="Vertical"
+                   VerticalAlignment="Center">
+                <TextBox  helper:TextBoxHelper.Placeholder="🔍 Search actors...." Style="{StaticResource ResourceKey=SearchBarStyle}"
+               x:Name="SearchBar"  Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Height="30" Width="{Binding Width, ElementName=Divider}"/>
+            </StackPanel>
+        </Border>
+
         <StackPanel Grid.Row="2" Orientation="Vertical">
             <!--Showing x of y Actors-->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
@@ -41,7 +45,7 @@
                 <TextBlock Text="{Binding Path=MatchingActors}"
                            VerticalAlignment="Center"
                            Foreground="{StaticResource col_foreground}"/>
-                <TextBlock Text="of " Foreground="{StaticResource col_muted_foreground}"/>
+                <TextBlock Text=" of " Foreground="{StaticResource col_muted_foreground}"/>
                 <!--Data-->
                 <TextBlock Text="{Binding Path=TotalActors}" VerticalAlignment="Center" 
                            Foreground="{StaticResource col_foreground}"/>
