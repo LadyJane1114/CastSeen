@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using CastSeen.Data;
-using CastSeen.Models;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using CastSeen.Commands;
+using CastSeen.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CastSeen.ViewModels
 {
-    internal class ActorsViewModel :INotifyPropertyChanged
+    internal class ActorsViewModel : INotifyPropertyChanged
     {
         private readonly MainViewModel _mainViewModel;
 
@@ -22,6 +21,22 @@ namespace CastSeen.ViewModels
 
         private int _currentPage = 0;
         private const int PageSize = 50;
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            private set
+            {
+                if (_isLoading == value) return;
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+                OnPropertyChanged(nameof(LoadingVisibility));
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
+        public Visibility LoadingVisibility => IsLoading ? Visibility.Visible : Visibility.Collapsed;
 
         public ICommand NextPageCommand { get; }
         public ICommand PreviousPageCommand { get; }
@@ -34,8 +49,9 @@ namespace CastSeen.ViewModels
             PreviousPageCommand = new RelayCommand(PreviousPage, CanPreviousPage);
             OpenActorCommand = new RelayCommand<ActorDisplay>(OpenActor);
 
-            LoadData();
+            _ = LoadDataAsync();
         }
+
         public class ActorDisplay
         {
             public string NameId { get; set; }
@@ -58,60 +74,67 @@ namespace CastSeen.ViewModels
                     return $"{parts[0][0]}{parts[^1][0]}".ToUpper();
                 }
             }
-
         }
 
-        private void LoadData()
+        private async System.Threading.Tasks.Task LoadDataAsync()
         {
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
                 return;
 
-            using var context = new ImdbContext();
-            var actors = context.Names
-                .Where(n => n.PrimaryProfession != null && n.PrimaryProfession.Contains("actor"))
-                .OrderBy(n => n.NameId)
-                .Skip(_currentPage * PageSize)
-                .Take(PageSize)
-                .Select(n => new ActorDisplay
-                {
-                    NameId = n.NameId,
-                    Name = n.PrimaryName,
-                    BirthYear = n.BirthYear,
-                    ProjectCount = context.Principals.Count(tp => tp.NameId == n.NameId),
-                    SampleProjects = context.Principals
-                    .Where(tp => tp.NameId == n.NameId)
-                    .Join(context.Titles,
-                    tp => tp.TitleId,
-                    tb => tb.TitleId,
-                    (tp, tb) => tb.PrimaryTitle)
-                    .Take(1)
-                    .ToList()
-                })
-                .ToList();
-
-            Actors.Clear();
-            foreach (var actor in actors)
+            IsLoading = true;
+            try
             {
-                Actors.Add(actor);
+                using var context = new ImdbContext();
+                var actors = await context.Names
+                    .AsNoTracking()
+                    .Where(n => n.PrimaryProfession != null && n.PrimaryProfession.Contains("actor"))
+                    .OrderBy(n => n.NameId)
+                    .Skip(_currentPage * PageSize)
+                    .Take(PageSize)
+                    .Select(n => new ActorDisplay
+                    {
+                        NameId = n.NameId,
+                        Name = n.PrimaryName,
+                        BirthYear = n.BirthYear,
+                        ProjectCount = context.Principals.Count(tp => tp.NameId == n.NameId),
+                        SampleProjects = context.Principals
+                            .Where(tp => tp.NameId == n.NameId)
+                            .Join(context.Titles,
+                                tp => tp.TitleId,
+                                tb => tb.TitleId,
+                                (tp, tb) => tb.PrimaryTitle)
+                            .Take(1)
+                            .ToList()
+                    })
+                    .ToListAsync();
+
+                Actors.Clear();
+                foreach (var actor in actors)
+                {
+                    Actors.Add(actor);
+                }
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
-
 
         private void NextPage()
         {
             _currentPage++;
-            LoadData();
+            _ = LoadDataAsync();
         }
 
-        private bool CanNextPage() => true;
+        private bool CanNextPage() => !IsLoading;
 
         private void PreviousPage()
         {
             _currentPage--;
-            LoadData();
+            _ = LoadDataAsync();
         }
 
-        private bool CanPreviousPage() => _currentPage > 0;
+        private bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
 
         private void OpenActor(ActorDisplay actor)
         {

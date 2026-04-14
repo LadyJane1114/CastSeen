@@ -1,13 +1,18 @@
 ﻿using CastSeen.Data;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
 namespace CastSeen.ViewModels
 {
-    internal class DetailsViewModel
+    internal class DetailsViewModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public DetailsViewModel(MainViewModel mainViewModel, DetailsNavigationRequest request)
         {
             Request = request;
@@ -18,58 +23,175 @@ namespace CastSeen.ViewModels
             {
                 ActorSectionVisibility = Visibility.Visible;
                 MovieSectionVisibility = Visibility.Collapsed;
-                LoadActorDetails(request.Id);
             }
             else
             {
                 ActorSectionVisibility = Visibility.Collapsed;
                 MovieSectionVisibility = Visibility.Visible;
-                LoadMovieDetails(request.Id);
             }
+
+            _ = LoadDetailsAsync(request);
         }
 
         public DetailsNavigationRequest Request { get; }
         public ICommand BackCommand { get; }
 
-        public string Header { get; private set; } = "Details";
+        private string _header = "Details";
+        public string Header
+        {
+            get => _header;
+            private set => SetProperty(ref _header, value);
+        }
+
         public string Identifier { get; }
         public Visibility ActorSectionVisibility { get; }
         public Visibility MovieSectionVisibility { get; }
 
-        public string ActorName { get; private set; } = "";
-        public string ActorLifeYears { get; private set; } = "";
-        public string ActorProfessions { get; private set; } = "";
-        public int ActorProjectCount { get; private set; }
-        public List<string> ActorKnownFor { get; private set; } = new();
-        public List<string> ActorCredits { get; private set; } = new();
+        private Visibility _loadingVisibility = Visibility.Visible;
+        public Visibility LoadingVisibility
+        {
+            get => _loadingVisibility;
+            private set => SetProperty(ref _loadingVisibility, value);
+        }
 
-        public string MovieTitle { get; private set; } = "";
-        public string MovieSubtitle { get; private set; } = "";
-        public string MovieRatingText { get; private set; } = "No rating";
-        public List<string> MovieGenres { get; private set; } = new();
-        public List<string> MovieTopCast { get; private set; } = new();
-        public List<string> MovieDirectors { get; private set; } = new();
-        public List<string> MovieWriters { get; private set; } = new();
+        private string _actorName = "";
+        public string ActorName
+        {
+            get => _actorName;
+            private set => SetProperty(ref _actorName, value);
+        }
 
-        private void LoadActorDetails(string nameId)
+        private string _actorLifeYears = "";
+        public string ActorLifeYears
+        {
+            get => _actorLifeYears;
+            private set => SetProperty(ref _actorLifeYears, value);
+        }
+
+        private string _actorProfessions = "";
+        public string ActorProfessions
+        {
+            get => _actorProfessions;
+            private set => SetProperty(ref _actorProfessions, value);
+        }
+
+        private int _actorProjectCount;
+        public int ActorProjectCount
+        {
+            get => _actorProjectCount;
+            private set => SetProperty(ref _actorProjectCount, value);
+        }
+
+        private List<string> _actorKnownFor = new();
+        public List<string> ActorKnownFor
+        {
+            get => _actorKnownFor;
+            private set => SetProperty(ref _actorKnownFor, value);
+        }
+
+        private List<string> _actorCredits = new();
+        public List<string> ActorCredits
+        {
+            get => _actorCredits;
+            private set => SetProperty(ref _actorCredits, value);
+        }
+
+        private string _movieTitle = "";
+        public string MovieTitle
+        {
+            get => _movieTitle;
+            private set => SetProperty(ref _movieTitle, value);
+        }
+
+        private string _movieSubtitle = "";
+        public string MovieSubtitle
+        {
+            get => _movieSubtitle;
+            private set => SetProperty(ref _movieSubtitle, value);
+        }
+
+        private string _movieRatingText = "No rating";
+        public string MovieRatingText
+        {
+            get => _movieRatingText;
+            private set => SetProperty(ref _movieRatingText, value);
+        }
+
+        private List<string> _movieGenres = new();
+        public List<string> MovieGenres
+        {
+            get => _movieGenres;
+            private set => SetProperty(ref _movieGenres, value);
+        }
+
+        private List<string> _movieTopCast = new();
+        public List<string> MovieTopCast
+        {
+            get => _movieTopCast;
+            private set => SetProperty(ref _movieTopCast, value);
+        }
+
+        private List<string> _movieDirectors = new();
+        public List<string> MovieDirectors
+        {
+            get => _movieDirectors;
+            private set => SetProperty(ref _movieDirectors, value);
+        }
+
+        private List<string> _movieWriters = new();
+        public List<string> MovieWriters
+        {
+            get => _movieWriters;
+            private set => SetProperty(ref _movieWriters, value);
+        }
+
+        private async System.Threading.Tasks.Task LoadDetailsAsync(DetailsNavigationRequest request)
+        {
+            try
+            {
+                if (request.TargetType == DetailsTargetType.Actor)
+                {
+                    await LoadActorDetailsAsync(request.Id);
+                }
+                else
+                {
+                    await LoadMovieDetailsAsync(request.Id);
+                }
+            }
+            catch
+            {
+                Header = request.TargetType == DetailsTargetType.Actor ? "Actor Details" : "Movie Details";
+
+                if (request.TargetType == DetailsTargetType.Actor)
+                {
+                    ActorName = "Unable to load actor details";
+                }
+                else
+                {
+                    MovieTitle = "Unable to load movie details";
+                }
+            }
+            finally
+            {
+                LoadingVisibility = Visibility.Collapsed;
+            }
+        }
+
+        private async System.Threading.Tasks.Task LoadActorDetailsAsync(string nameId)
         {
             using var context = new ImdbContext();
 
-            var actor = context.Names
+            var actor = await context.Names
+                .AsNoTracking()
                 .Where(n => n.NameId == nameId)
                 .Select(n => new
                 {
                     n.PrimaryName,
                     n.BirthYear,
                     n.DeathYear,
-                    n.PrimaryProfession,
-                    KnownFor = n.TitlesNavigation
-                        .Select(t => t.PrimaryTitle)
-                        .Where(t => t != null)
-                        .Take(6)
-                        .ToList()
+                    n.PrimaryProfession
                 })
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (actor == null)
             {
@@ -85,19 +207,26 @@ namespace CastSeen.ViewModels
                 : $"{actor.BirthYear?.ToString() ?? "?"} - {actor.DeathYear?.ToString() ?? "Present"}";
             ActorProfessions = string.IsNullOrWhiteSpace(actor.PrimaryProfession) ? "Unknown" : actor.PrimaryProfession;
 
-            ActorProjectCount = context.Principals.Count(p => p.NameId == nameId);
+            ActorProjectCount = await context.Principals
+                .AsNoTracking()
+                .CountAsync(p => p.NameId == nameId);
 
-            ActorKnownFor = actor.KnownFor;
-
-            var actorCreditsRaw = context.Principals
+            var actorCreditsRaw = await context.Principals
+                .AsNoTracking()
                 .Where(p => p.NameId == nameId)
-                .Join(context.Titles,
+                .Join(context.Titles.AsNoTracking(),
                     p => p.TitleId,
                     t => t.TitleId,
                     (p, t) => new { t.PrimaryTitle, t.StartYear })
                 .Where(x => x.PrimaryTitle != null)
                 .OrderByDescending(x => x.StartYear)
-                .Take(40)
+                .Take(60)
+                .ToListAsync();
+
+            ActorKnownFor = actorCreditsRaw
+                .Select(x => x.PrimaryTitle!)
+                .Distinct()
+                .Take(6)
                 .ToList();
 
             ActorCredits = actorCreditsRaw
@@ -107,11 +236,12 @@ namespace CastSeen.ViewModels
                 .ToList();
         }
 
-        private void LoadMovieDetails(string titleId)
+        private async System.Threading.Tasks.Task LoadMovieDetailsAsync(string titleId)
         {
             using var context = new ImdbContext();
 
-            var movie = context.Titles
+            var movie = await context.Titles
+                .AsNoTracking()
                 .Where(t => t.TitleId == titleId)
                 .Select(t => new
                 {
@@ -125,7 +255,7 @@ namespace CastSeen.ViewModels
                     Rating = t.Rating != null ? t.Rating.AverageRating : null,
                     Votes = t.Rating != null ? t.Rating.NumVotes : null
                 })
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (movie == null)
             {
@@ -145,9 +275,10 @@ namespace CastSeen.ViewModels
                 ? "No rating"
                 : $"{movie.Rating:0.0} ({movie.Votes?.ToString("N0") ?? "0"} votes)";
 
-            MovieTopCast = context.Principals
+            MovieTopCast = await context.Principals
+                .AsNoTracking()
                 .Where(p => p.TitleId == titleId)
-                .Join(context.Names,
+                .Join(context.Names.AsNoTracking(),
                     p => p.NameId,
                     n => n.NameId,
                     (p, n) => new { p.Ordering, n.PrimaryName })
@@ -157,7 +288,21 @@ namespace CastSeen.ViewModels
                 .Distinct()
                 .Take(12)
                 .Select(n => n!)
-                .ToList();
+                .ToListAsync();
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return;
+
+            field = value;
+            OnPropertyChanged(propertyName);
         }
     }
 }

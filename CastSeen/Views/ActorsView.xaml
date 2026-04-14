@@ -17,6 +17,10 @@
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Explore Profiles" Foreground="{StaticResource col_muted_foreground}" FontFamily="{StaticResource font_text}" FontSize="14"/>
             <TextBlock Text="Actors" FontSize="38" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+            <TextBlock Text="Loading actors..."
+                       Visibility="{Binding LoadingVisibility}"
+                       Foreground="{StaticResource col_muted_foreground}"
+                       Margin="0,6,0,0"/>
             <Border Height="1" Background="{StaticResource col_muted}" Margin="16,5"/>
         </StackPanel>
 
