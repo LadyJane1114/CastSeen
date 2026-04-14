@@ -34,47 +34,50 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!--Grey area behind search-->
-            <Border Padding="10, 0" Background="{StaticResource col_muted}" Margin="0,0,10,0">
-                <StackPanel x:Name="SearchStackPanel" Orientation="Vertical" VerticalAlignment="Center">
-                    <TextBox helper:TextBoxHelper.Placeholder="🔍 Search movie by title...." 
-                             Style="{StaticResource ResourceKey=SearchBarStyle}"
-                             x:Name="SearchBar" 
-                             Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" 
-                             Height="30"/>
+            <StackPanel Orientation="Horizontal">
+                <!--Grey area behind search-->
+                <Border Padding="10, 0" Background="{StaticResource col_muted}" Margin="0,0,10,0">
+                    <StackPanel x:Name="SearchStackPanel" Orientation="Vertical" VerticalAlignment="Center">
+                        <TextBox helper:TextBoxHelper.Placeholder="Search movie by title...."
+                                 Style="{StaticResource ResourceKey=SearchBarStyle}"
+                                 x:Name="SearchBar" 
+                                 Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="30" Width="200"/>
+                    </StackPanel>
+                </Border>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="All"
+                            Command="{Binding SelectGenreCommand}"
+                            CommandParameter="All Genres"
+                            Style="{StaticResource FilterButtonStyle}"
+                            />
+
+                    <ItemsControl ItemsSource="{Binding TopGenres}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding}"
+                                        Command="{Binding DataContext.SelectGenreCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Style="{StaticResource TopGenresButtonStyle}"
+                                        Margin="0,0,5,0" Padding="10,2"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ComboBox ItemsSource="{Binding OtherGenres}"
+                              SelectedItem="{Binding SelectedGenre}"
+                              VerticalContentAlignment="Center"
+                              Style="{StaticResource MovieComboBoxStyle}"
+                              ItemContainerStyle="{StaticResource MovieComboBoxItemStyle}"/>
                 </StackPanel>
-            </Border>
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Content="All" 
-                        Command="{Binding SelectGenreCommand}" 
-                        CommandParameter="All Genres"
-                        Style="{StaticResource FilterButtonStyle}"
-                        />
-                
-                <ItemsControl ItemsSource="{Binding TopGenres}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Content="{Binding}" 
-                                    Command="{Binding DataContext.SelectGenreCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                    CommandParameter="{Binding}"
-                                    Style="{StaticResource HomeDarkButtonStyle}"
-                                    Margin="0,0,5,0" Padding="10,2"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <ComboBox ItemsSource="{Binding OtherGenres}" 
-                          SelectedItem="{Binding SelectedGenre}"
-                          Width="150" Height="30"
-                          VerticalContentAlignment="Center"
-                          Style="{StaticResource {x:Type ComboBox}}"/>
             </StackPanel>
+
+
         </Grid>
 
         <StackPanel Grid.Row="2" Orientation="Vertical">
