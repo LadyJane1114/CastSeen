@@ -29,12 +29,13 @@ namespace CastSeen.ViewModels
         {
             NextPageCommand = new RelayCommand(NextPage, CanNextPage);
             PreviousPageCommand = new RelayCommand(PreviousPage, CanPreviousPage);
-            OpenActorCommand = new RelayCommand<Name>(OpenActor);
+            OpenActorCommand = new RelayCommand<ActorDisplay>(OpenActor);
 
             LoadData();
         }
         public class ActorDisplay
         {
+            public string NameId { get; set; }
             public string Name { get; set; }
             public int? BirthYear { get; set; }
             public int ProjectCount { get; set; }
@@ -70,6 +71,7 @@ namespace CastSeen.ViewModels
                 .Take(PageSize)
                 .Select(n => new ActorDisplay
                 {
+                    NameId = n.NameId,
                     Name = n.PrimaryName,
                     BirthYear = n.BirthYear,
                     ProjectCount = context.Principals.Count(tp => tp.NameId == n.NameId),
@@ -108,12 +110,12 @@ namespace CastSeen.ViewModels
 
         private bool CanPreviousPage() => _currentPage > 0;
 
-        private void OpenActor(Name actor)
+        private void OpenActor(ActorDisplay actor)
         {
             if (actor == null) return;
 
             // TEMP: just prove it's working
-            MessageBox.Show($"Clicked: {actor.PrimaryName}");
+            MessageBox.Show($"Clicked: {actor.Name} ({actor.NameId})");
 
             // TODO: replace this with real navigation
         }
