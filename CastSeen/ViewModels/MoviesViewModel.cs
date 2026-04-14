@@ -21,6 +21,19 @@ namespace CastSeen.ViewModels
 
         private int _currentPage = 0;
         private const int PageSize = 50;
+        private string _searchTerm = string.Empty;
+        
+        public string SearchQuery
+        {
+            get => _searchTerm;
+            set
+            {
+                if (_searchTerm == value) return;
+                _searchTerm = value;
+                OnPropertyChanged(nameof(SearchQuery));
+                _ = SearchAsync(value);
+            }
+        }
 
         private bool _isLoading;
         public bool IsLoading
@@ -70,13 +83,44 @@ namespace CastSeen.ViewModels
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
                 return;
 
+            _ = SearchAsync(SearchQuery);
+        }
+
+        private void NextPage()
+        {
+            _currentPage++;
+            _ = LoadDataAsync();
+        }
+
+        private bool CanNextPage() => !IsLoading;
+
+        private void PreviousPage()
+        {
+            _currentPage--;
+            _ = LoadDataAsync();
+        }
+
+        private bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
+
+        private void OpenMovie(MovieDisplay movie)
+        {
+            if (movie == null || string.IsNullOrWhiteSpace(movie.TitleId)) return;
+
+            _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Movie, movie.TitleId));
+        }
+        
+        public async Task SearchAsync(string searchTerm)
+        {
+            _searchTerm = searchTerm;
+            _currentPage = 0;
+            IsLoading = true;
             IsLoading = true;
             try
             {
                 using var context = new ImdbContext();
                 var movies = await context.Titles
                     .AsNoTracking()
-                    .Where(t => t.TitleType == "movie")
+                    .Where(t => (string.IsNullOrWhiteSpace(searchTerm) || t.PrimaryTitle!.Contains(searchTerm)) && t.TitleType == "movie")
                     .OrderBy(t => t.TitleId)
                     .Skip(_currentPage * PageSize)
                     .Take(PageSize)
@@ -115,29 +159,6 @@ namespace CastSeen.ViewModels
             {
                 IsLoading = false;
             }
-        }
-
-        private void NextPage()
-        {
-            _currentPage++;
-            _ = LoadDataAsync();
-        }
-
-        private bool CanNextPage() => !IsLoading;
-
-        private void PreviousPage()
-        {
-            _currentPage--;
-            _ = LoadDataAsync();
-        }
-
-        private bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
-
-        private void OpenMovie(MovieDisplay movie)
-        {
-            if (movie == null || string.IsNullOrWhiteSpace(movie.TitleId)) return;
-
-            _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Movie, movie.TitleId));
         }
     }
 }

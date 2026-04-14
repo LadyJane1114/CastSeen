@@ -21,6 +21,18 @@ namespace CastSeen.ViewModels
 
         private int _currentPage = 0;
         private const int PageSize = 50;
+        private string _searchTerm = string.Empty;
+        public string SearchQuery
+        {
+            get => _searchTerm;
+            set
+            {
+                if (_searchTerm == value) return;
+                _searchTerm = value;
+                OnPropertyChanged(nameof(SearchQuery));
+                _ = SearchAsync(value);
+            }
+        }
 
         private bool _isLoading;
         public bool IsLoading
@@ -81,13 +93,45 @@ namespace CastSeen.ViewModels
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
                 return;
 
+            _ = SearchAsync(SearchQuery);
+        }
+
+        private void NextPage()
+        {
+            _currentPage++;
+            _ = LoadDataAsync();
+        }
+
+        private bool CanNextPage() => !IsLoading;
+
+        private void PreviousPage()
+        {
+            _currentPage--;
+            _ = LoadDataAsync();
+        }
+
+        private bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
+
+        private void OpenActor(ActorDisplay actor)
+        {
+            if (actor == null || string.IsNullOrWhiteSpace(actor.NameId)) return;
+
+            _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Actor, actor.NameId));
+        }
+
+        public async System.Threading.Tasks.Task SearchAsync(string searchTerm)
+        {
+            _searchTerm = searchTerm;
+            _currentPage = 0;
             IsLoading = true;
+
             try
             {
                 using var context = new ImdbContext();
                 var actors = await context.Names
                     .AsNoTracking()
-                    .Where(n => n.PrimaryProfession != null && n.PrimaryProfession.Contains("actor"))
+                    .Where(n => (string.IsNullOrWhiteSpace(searchTerm) || n.PrimaryName!.Contains(searchTerm)) &&
+                                n.PrimaryProfession != null && n.PrimaryProfession.Contains("actor"))
                     .OrderBy(n => n.NameId)
                     .Skip(_currentPage * PageSize)
                     .Take(PageSize)
@@ -118,29 +162,6 @@ namespace CastSeen.ViewModels
             {
                 IsLoading = false;
             }
-        }
-
-        private void NextPage()
-        {
-            _currentPage++;
-            _ = LoadDataAsync();
-        }
-
-        private bool CanNextPage() => !IsLoading;
-
-        private void PreviousPage()
-        {
-            _currentPage--;
-            _ = LoadDataAsync();
-        }
-
-        private bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
-
-        private void OpenActor(ActorDisplay actor)
-        {
-            if (actor == null || string.IsNullOrWhiteSpace(actor.NameId)) return;
-
-            _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Actor, actor.NameId));
         }
     }
 }
