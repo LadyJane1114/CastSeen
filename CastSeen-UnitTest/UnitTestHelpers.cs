@@ -24,12 +24,12 @@ internal static class UnitTestHelpers
         return (bool)method.Invoke(instance, null)!;
     }
 
-    public static void InvokePrivateVoidMethod(object instance, string methodName, object? parameter)
+    public static void InvokePrivateVoidMethod(object instance, string methodName, params object?[] arguments)
     {
         var method = instance.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.IsNotNull(method);
 
-        method.Invoke(instance, new[] { parameter });
+        method.Invoke(instance, arguments ?? Array.Empty<object?>());
     }
 }
 

@@ -158,6 +158,117 @@ public sealed class CastSeenUnitTests
     {
         var viewModel = UnitTestHelpers.CreateUninitializedActorsViewModel();
 
-        UnitTestHelpers.InvokePrivateVoidMethod(viewModel, "OpenActor", null);
+        UnitTestHelpers.InvokePrivateVoidMethod(viewModel, "OpenActor", new object?[] { null });
+    }
+
+    [TestMethod]
+    public void ActorsViewModel_OpenActor_WithEmptyNameId_DoesNotThrow()
+    {
+        var viewModel = UnitTestHelpers.CreateUninitializedActorsViewModel();
+        var actor = new ActorsViewModel.ActorDisplay { NameId = "" };
+
+        UnitTestHelpers.InvokePrivateVoidMethod(viewModel, "OpenActor", actor);
+    }
+
+    [TestMethod]
+    public void DetailsNavigationRequest_StoresActorTargetAndId()
+    {
+        var request = new DetailsNavigationRequest(DetailsTargetType.Actor, "nm123");
+
+        Assert.AreEqual(DetailsTargetType.Actor, request.TargetType);
+        Assert.AreEqual("nm123", request.Id);
+    }
+
+    [TestMethod]
+    public void DetailsNavigationRequest_StoresMovieTargetAndId()
+    {
+        var request = new DetailsNavigationRequest(DetailsTargetType.Movie, "tt456");
+
+        Assert.AreEqual(DetailsTargetType.Movie, request.TargetType);
+        Assert.AreEqual("tt456", request.Id);
+    }
+
+    [TestMethod]
+    public void DetailsTargetType_HasExpectedValues()
+    {
+        Assert.AreEqual(0, (int)DetailsTargetType.Actor);
+        Assert.AreEqual(1, (int)DetailsTargetType.Movie);
+    }
+
+    [TestMethod]
+    public void MainViewModel_Return_PopsHistory()
+    {
+        var viewModel = (MainViewModel)FormatterServices.GetUninitializedObject(typeof(MainViewModel));
+        var history = new Stack<object>();
+        var previous = new object();
+        history.Push(previous);
+
+        UnitTestHelpers.SetPrivateField(viewModel, "_history", history);
+        UnitTestHelpers.SetPrivateField(viewModel, "_currentViewModel", new object());
+
+        UnitTestHelpers.InvokePrivateVoidMethod(viewModel, "Return");
+
+        Assert.AreSame(previous, viewModel.CurrentViewModel);
+    }
+
+    [TestMethod]
+    public void MainViewModel_Navigate_PushesCurrentViewModelAndReplacesIt()
+    {
+        var viewModel = (MainViewModel)FormatterServices.GetUninitializedObject(typeof(MainViewModel));
+        var history = new Stack<object>();
+        var current = new object();
+        var next = new object();
+
+        UnitTestHelpers.SetPrivateField(viewModel, "_history", history);
+        UnitTestHelpers.SetPrivateField(viewModel, "_currentViewModel", current);
+
+        var navigateMethod = typeof(MainViewModel).GetMethod("Navigate", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(navigateMethod);
+
+        navigateMethod.Invoke(viewModel, new object[] { new Func<object>(() => next) });
+
+        Assert.AreSame(current, history.Peek());
+        Assert.AreSame(next, viewModel.CurrentViewModel);
+    }
+
+    [TestMethod]
+    public void MovieDisplay_TopActorsDisplay_FormatsCommaSeparatedList()
+    {
+        var display = new MoviesViewModel.MovieDisplay
+        {
+            TopActors = new List<string> { "A", "B", "C" }
+        };
+
+        Assert.AreEqual("A, B, C", display.TopActorsDisplay);
+    }
+
+    [TestMethod]
+    public void MovieDisplay_TopActorsDisplay_EmptyList_ReturnsEmptyString()
+    {
+        var display = new MoviesViewModel.MovieDisplay();
+
+        Assert.AreEqual(string.Empty, display.TopActorsDisplay);
+    }
+
+    [TestMethod]
+    public void MoviesViewModel_CanPreviousPage_ReturnsFalseOnFirstPage()
+    {
+        var viewModel = (MoviesViewModel)FormatterServices.GetUninitializedObject(typeof(MoviesViewModel));
+        UnitTestHelpers.SetPrivateField(viewModel, "_currentPage", 0);
+
+        var result = UnitTestHelpers.InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
+
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public void MoviesViewModel_CanPreviousPage_ReturnsTrueAfterPagingForward()
+    {
+        var viewModel = (MoviesViewModel)FormatterServices.GetUninitializedObject(typeof(MoviesViewModel));
+        UnitTestHelpers.SetPrivateField(viewModel, "_currentPage", 1);
+
+        var result = UnitTestHelpers.InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
+
+        Assert.IsTrue(result);
     }
 }
