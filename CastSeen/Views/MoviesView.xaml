@@ -78,6 +78,12 @@
         </Grid>
 
         <StackPanel Grid.Row="2" Orientation="Vertical">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="2*"></ColumnDefinition>
+                  <ColumnDefinition Width="*"></ColumnDefinition>
+              </Grid.ColumnDefinitions>
+            
             <!--Showing x of y movies-->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
                 <TextBlock Text="Showing: " Foreground="{StaticResource col_muted_foreground}"/>
@@ -92,6 +98,28 @@
                 <TextBlock Text=" Movies." Foreground="{StaticResource col_muted_foreground}"/>
             </StackPanel>
             
+            <!--Sort by fields-->
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <TextBlock Text="Sort by: " Foreground="{StaticResource col_muted_foreground}"/>
+                <Button Content="Rating " 
+                        Command="{Binding SortCommand}" 
+                        CommandParameter="Rating"
+                        Style="{StaticResource FilterButtonStyle}"
+                        Padding="5,0"/>
+                <TextBlock Text=" | " Foreground="{StaticResource col_muted_foreground}"/>
+                <Button Content=" Year " 
+                        Command="{Binding SortCommand}" 
+                        CommandParameter="Year"
+                        Style="{StaticResource FilterButtonStyle}"
+                        Padding="5,0"/>
+                <TextBlock Text=" | " Foreground="{StaticResource col_muted_foreground}"/>
+                <Button Content="Title" 
+                        Command="{Binding SortCommand}" 
+                        CommandParameter="Title"
+                        Style="{StaticResource FilterButtonStyle}"
+                        Padding="5,0"/>
+            </StackPanel>
+            </Grid>
         <ListBox ItemsSource="{Binding Movies}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">

@@ -35,6 +35,20 @@ namespace CastSeen.ViewModels
         
         private string _searchTerm = string.Empty;
         private string? _selectedGenre;
+        private string _sortColumn = "TitleId";
+        private bool _sortDescending = false;
+
+        public string SortColumn
+        {
+            get => _sortColumn;
+            set { _sortColumn = value; OnPropertyChanged(nameof(SortColumn)); }
+        }
+
+        public bool SortDescending
+        {
+            get => _sortDescending;
+            set { _sortDescending = value; OnPropertyChanged(nameof(SortDescending)); }
+        }
 
         public string? SelectedGenre
         {
@@ -81,6 +95,7 @@ namespace CastSeen.ViewModels
         public ICommand PreviousPageCommand { get; }
         public ICommand OpenMovieCommand { get; }
         public ICommand SelectGenreCommand { get; }
+        public ICommand SortCommand { get; }
 
         public MoviesViewModel(MainViewModel mainViewModel)
         {
@@ -89,6 +104,7 @@ namespace CastSeen.ViewModels
             PreviousPageCommand = new RelayCommand(PreviousPage, CanPreviousPage);
             OpenMovieCommand = new RelayCommand<MovieDisplay>(OpenMovie);
             SelectGenreCommand = new RelayCommand<string>(SelectGenre);
+            SortCommand = new RelayCommand<string>(Sort);
 
             _ = LoadDataAsync();
         }
@@ -176,6 +192,22 @@ namespace CastSeen.ViewModels
             SelectedGenre = genre;
         }
 
+        private void Sort(string column)
+        {
+            if (SortColumn == column)
+            {
+                SortDescending = !SortDescending;
+            }
+            else
+            {
+                SortColumn = column;
+                SortDescending = false;
+                if (column == "Rating") SortDescending = true; // Default rating to descending (highest first)
+            }
+            _currentPage = 0;
+            _ = SearchAsync(SearchQuery);
+        }
+
         public async Task SearchAsync(string searchTerm)
         {
             _searchTerm = searchTerm;
@@ -192,8 +224,21 @@ namespace CastSeen.ViewModels
                     query = query.Where(t => t.Genres.Any(g => g.Name == SelectedGenre));
                 }
 
+                // Apply Sorting
+                query = SortColumn switch
+                {
+                    "Rating" => SortDescending 
+                        ? query.OrderByDescending(t => t.Rating.AverageRating).ThenBy(t => t.PrimaryTitle)
+                        : query.OrderBy(t => t.Rating.AverageRating).ThenBy(t => t.PrimaryTitle),
+                    "Year" => SortDescending 
+                        ? query.OrderByDescending(t => t.StartYear).ThenBy(t => t.PrimaryTitle)
+                        : query.OrderBy(t => t.StartYear).ThenBy(t => t.PrimaryTitle),
+                    _ => SortDescending 
+                        ? query.OrderByDescending(t => t.PrimaryTitle)
+                        : query.OrderBy(t => t.PrimaryTitle)
+                };
+
                 var movies = await query
-                    .OrderBy(t => t.TitleId)
                     .Skip(_currentPage * PageSize)
                     .Take(PageSize)
                     .Select(t => new MovieDisplay
