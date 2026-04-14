@@ -21,6 +21,16 @@ namespace CastSeen.ViewModels
 
         private int _currentPage = 0;
         private const int PageSize = 50;
+        
+        /*Actors count and reducers*/
+        public int MatchingActors => Actors.Count;
+        private int _totalActors = 0;
+        public int TotalActors
+        {
+            get => _totalActors;
+            set { _totalActors = value; OnPropertyChanged(nameof(TotalActors)); }
+        }
+        
         private string _searchTerm = string.Empty;
         public string SearchQuery
         {
@@ -153,10 +163,12 @@ namespace CastSeen.ViewModels
                     .ToListAsync();
 
                 Actors.Clear();
+                TotalActors = context.Names.Count(n => n.PrimaryProfession != null && n.PrimaryProfession.Contains("actor"));
                 foreach (var actor in actors)
                 {
                     Actors.Add(actor);
                 }
+                OnPropertyChanged(nameof(MatchingActors));
             }
             finally
             {

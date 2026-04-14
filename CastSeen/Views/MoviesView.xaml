@@ -33,7 +33,22 @@
                       x:Name="SearchBar"  Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Height="{Binding Height, ElementName=SearchStackPanel}" Width="{Binding Width, ElementName=Divider}"/>
         </StackPanel>
 
-        <ListBox Grid.Row="2" ItemsSource="{Binding Movies}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch">
+        <StackPanel Grid.Row="2" Orientation="Vertical">
+            <!--Showing x of y movies-->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                <TextBlock Text="Showing: " Foreground="{StaticResource col_muted_foreground}"/>
+                <!--Data-->
+                <TextBlock Text="{Binding Path=MatchingMovies}"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource col_foreground}"/>
+                <TextBlock Text="of " Foreground="{StaticResource col_muted_foreground}"/>
+                <!--Data-->
+                <TextBlock Text="{Binding Path=TotalMovies}" VerticalAlignment="Center" 
+                           Foreground="{StaticResource col_foreground}"/>
+                <TextBlock Text=" Movies." Foreground="{StaticResource col_muted_foreground}"/>
+            </StackPanel>
+            
+        <ListBox ItemsSource="{Binding Movies}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="HorizontalContentAlignment" 
@@ -160,7 +175,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-
+        </StackPanel>
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
             <Button Content="Previous 50" Command="{Binding PreviousPageCommand}" Style="{StaticResource HomeDarkButtonStyle}" Cursor="Hand" Margin="5,0"/>
             <Button Content="Next 50" Command="{Binding NextPageCommand}" Style="{StaticResource HomePrimaryButtonStyle}" Cursor="Hand" Margin="5,0"/>

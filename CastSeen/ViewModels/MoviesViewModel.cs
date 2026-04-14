@@ -21,6 +21,15 @@ namespace CastSeen.ViewModels
 
         private int _currentPage = 0;
         private const int PageSize = 50;
+        /*Actors count and reducers*/
+        public int MatchingMovies => Movies.Count;
+        private int _totalMovies = 0;
+        public int TotalMovies
+        {
+            get => _totalMovies;
+            set { _totalMovies = value; OnPropertyChanged(nameof(TotalMovies)); }
+        }
+        
         private string _searchTerm = string.Empty;
         
         public string SearchQuery
@@ -154,6 +163,7 @@ namespace CastSeen.ViewModels
                 {
                     Movies.Add(movie);
                 }
+                OnPropertyChanged(nameof(MatchingMovies));
             }
             finally
             {

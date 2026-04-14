@@ -32,20 +32,21 @@
             <TextBox  helper:TextBoxHelper.Placeholder="🔍 Search by actor name" Style="{StaticResource ResourceKey=SearchBarStyle}"
                       x:Name="SearchBar"  Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Height="{Binding Height, ElementName=SearchStackPanel}" Width="{Binding Width, ElementName=Divider}"/>
         </StackPanel>
-
-        <ListBox Grid.Row="1" 
-                 ItemsSource="{Binding Actors}" 
-                 Background="Transparent" 
-                 BorderThickness="0" 
-                 HorizontalAlignment="Stretch" 
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
         
+        <StackPanel Grid.Row="2" Orientation="Vertical">
+            <!--Showing x of y Actors-->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                <TextBlock Text="Showing: " Foreground="{StaticResource col_muted_foreground}"/>
+                <!--Data-->
+                <TextBlock Text="{Binding Path=MatchingActors}"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource col_foreground}"/>
+                <TextBlock Text="of " Foreground="{StaticResource col_muted_foreground}"/>
+                <!--Data-->
+                <TextBlock Text="{Binding Path=TotalActors}" VerticalAlignment="Center" 
+                           Foreground="{StaticResource col_foreground}"/>
+                <TextBlock Text=" Actors." Foreground="{StaticResource col_muted_foreground}"/>
+            </StackPanel>
             
             <ListBox 
                      ItemsSource="{Binding Actors}" 
