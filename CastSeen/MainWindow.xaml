@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CastSeen"
         xmlns:views="clr-namespace:CastSeen.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="900">
+        Title="MainWindow" Height="650" Width="900">
 
     
     <Grid Background="{StaticResource col_background}">

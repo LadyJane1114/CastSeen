@@ -21,6 +21,28 @@ namespace CastSeen.ViewModels
 
         private int _currentPage = 0;
         private const int PageSize = 50;
+        
+        /*Actors count and reducers*/
+        public int MatchingActors => Actors.Count;
+        private int _totalActors = 0;
+        public int TotalActors
+        {
+            get => _totalActors;
+            set { _totalActors = value; OnPropertyChanged(nameof(TotalActors)); }
+        }
+        
+        private string _searchTerm = string.Empty;
+        public string SearchQuery
+        {
+            get => _searchTerm;
+            set
+            {
+                if (_searchTerm == value) return;
+                _searchTerm = value;
+                OnPropertyChanged(nameof(SearchQuery));
+                _ = SearchAsync(value);
+            }
+        }
 
         private bool _isLoading;
         public bool IsLoading
@@ -81,13 +103,21 @@ namespace CastSeen.ViewModels
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
                 return;
 
+            _ = SearchAsync(SearchQuery);
+        }
+        
+        public async System.Threading.Tasks.Task SearchAsync(string searchTerm)
+        {
+            _searchTerm = searchTerm;
             IsLoading = true;
+
             try
             {
                 using var context = new ImdbContext();
                 var actors = await context.Names
                     .AsNoTracking()
-                    .Where(n => n.PrimaryProfession != null && n.PrimaryProfession.Contains("actor"))
+                    .Where(n => (string.IsNullOrWhiteSpace(searchTerm) || n.PrimaryName!.Contains(searchTerm)) &&
+                                n.PrimaryProfession != null && n.PrimaryProfession.Contains("actor"))
                     .OrderBy(n => n.NameId)
                     .Skip(_currentPage * PageSize)
                     .Take(PageSize)
@@ -109,10 +139,13 @@ namespace CastSeen.ViewModels
                     .ToListAsync();
 
                 Actors.Clear();
+                TotalActors = context.Names.Count(n => (string.IsNullOrWhiteSpace(searchTerm) || n.PrimaryName!.Contains(searchTerm)) &&
+                                                       n.PrimaryProfession != null && n.PrimaryProfession.Contains("actor"));
                 foreach (var actor in actors)
                 {
                     Actors.Add(actor);
                 }
+                OnPropertyChanged(nameof(MatchingActors));
             }
             finally
             {
@@ -126,7 +159,7 @@ namespace CastSeen.ViewModels
             _ = LoadDataAsync();
         }
 
-        internal bool CanNextPage() => !IsLoading;
+        internal bool CanNextPage() => !IsLoading && MatchingActors >= PageSize;
 
         internal void PreviousPage()
         {
