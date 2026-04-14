@@ -11,6 +11,7 @@
     <Grid Margin="20">
         <StackPanel>
             <StackPanel Orientation="Horizontal">
+               
                 <Path Data="{StaticResource icon_star}" Width="14" Height="14" Stretch="Uniform" Fill="{StaticResource col_muted_foreground}" Margin="0,0,8,0"/>
                 <TextBlock Text="A Desktop Movie Database Experience" Foreground="{StaticResource col_muted_foreground}" FontFamily="{StaticResource font_text}" FontSize="14"/>
                 <Path Data="{StaticResource icon_star}" Width="14" Height="14" Stretch="Uniform" Fill="{StaticResource col_muted_foreground}" Margin="8,0,0,0"/>

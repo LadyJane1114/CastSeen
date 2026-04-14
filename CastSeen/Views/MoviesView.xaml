@@ -16,7 +16,11 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Movies" Foreground="{StaticResource col_foreground}" FontSize="40" FontFamily="{StaticResource font_headers}" Margin="0,0,0,20"/>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Browse Collection" Foreground="{StaticResource col_muted_foreground}" FontFamily="{StaticResource font_text}" FontSize="14"/>
+            <TextBlock Text="Movies" FontSize="38" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+            <Border Height="1" Background="{StaticResource col_muted}" Margin="16,5"/>
+        </StackPanel>
 
         <ListBox Grid.Row="1" ItemsSource="{Binding Movies}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate>
