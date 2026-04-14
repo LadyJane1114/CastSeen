@@ -6,7 +6,94 @@
              xmlns:local="clr-namespace:CastSeen.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <TextBlock Text="Details"/>
+    <Grid Margin="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Button Content="← Back"
+                        Command="{Binding BackCommand}"
+                        Style="{StaticResource HomeDarkButtonStyle}"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,12"/>
+
+                <TextBlock Text="{Binding Header}" FontSize="34" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+                <TextBlock Text="{Binding Identifier}" FontSize="13" Margin="0,4,0,16" Foreground="{StaticResource col_muted_foreground}"/>
+
+                <StackPanel Visibility="{Binding ActorSectionVisibility}">
+                    <TextBlock Text="{Binding ActorName}" FontSize="26" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+                    <TextBlock Text="{Binding ActorLifeYears}" Margin="0,4,0,0" Foreground="{StaticResource col_muted_foreground}"/>
+                    <TextBlock Text="{Binding ActorProfessions, StringFormat=Professions: {0}}" Margin="0,4,0,0" Foreground="{StaticResource col_muted_foreground}"/>
+                    <TextBlock Text="{Binding ActorProjectCount, StringFormat=Projects: {0}}" Margin="0,4,0,14" Foreground="{StaticResource col_accent}"/>
+
+                    <TextBlock Text="Known For" FontSize="16" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+                    <ItemsControl ItemsSource="{Binding ActorKnownFor}" Margin="0,6,0,12">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#22FFFFFF" Padding="6,3" Margin="0,0,0,6" CornerRadius="4">
+                                    <TextBlock Text="{Binding}" Foreground="{StaticResource col_foreground}"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="Credits" FontSize="16" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+                    <ItemsControl ItemsSource="{Binding ActorCredits}" Margin="0,6,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="{StaticResource col_muted_foreground}" Margin="0,0,0,6"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <StackPanel Visibility="{Binding MovieSectionVisibility}">
+                    <TextBlock Text="{Binding MovieTitle}" FontSize="26" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+                    <TextBlock Text="{Binding MovieSubtitle}" Margin="0,4,0,0" Foreground="{StaticResource col_muted_foreground}"/>
+                    <TextBlock Text="{Binding MovieRatingText, StringFormat=Rating: {0}}" Margin="0,4,0,14" Foreground="{StaticResource col_accent}"/>
+
+                    <TextBlock Text="Genres" FontSize="16" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+                    <ItemsControl ItemsSource="{Binding MovieGenres}" Margin="0,6,0,12">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#22FFFFFF" Padding="6,3" Margin="0,0,6,6" CornerRadius="4">
+                                    <TextBlock Text="{Binding}" Foreground="{StaticResource col_foreground}"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="Top Cast" FontSize="16" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+                    <ItemsControl ItemsSource="{Binding MovieTopCast}" Margin="0,6,0,12">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="{StaticResource col_muted_foreground}" Margin="0,0,0,6"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="Directors" FontSize="16" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+                    <ItemsControl ItemsSource="{Binding MovieDirectors}" Margin="0,6,0,12">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="{StaticResource col_muted_foreground}" Margin="0,0,0,6"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="Writers" FontSize="16" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+                    <ItemsControl ItemsSource="{Binding MovieWriters}" Margin="0,6,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="{StaticResource col_muted_foreground}" Margin="0,0,0,6"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

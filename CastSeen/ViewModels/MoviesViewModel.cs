@@ -15,6 +15,8 @@ namespace CastSeen.ViewModels
 {
     internal class MoviesViewModel
     {
+        private readonly MainViewModel _mainViewModel;
+
         public ObservableCollection<MovieDisplay> Movies { get; } = new ObservableCollection<MovieDisplay>();
 
         private int _currentPage = 0;
@@ -24,8 +26,9 @@ namespace CastSeen.ViewModels
         public ICommand PreviousPageCommand { get; }
         public ICommand OpenMovieCommand { get; }
 
-        public MoviesViewModel()
+        public MoviesViewModel(MainViewModel mainViewModel)
         {
+            _mainViewModel = mainViewModel;
             NextPageCommand = new RelayCommand(NextPage, CanNextPage);
             PreviousPageCommand = new RelayCommand(PreviousPage, CanPreviousPage);
             OpenMovieCommand = new RelayCommand<MovieDisplay>(OpenMovie);
@@ -112,12 +115,9 @@ namespace CastSeen.ViewModels
 
         private void OpenMovie(MovieDisplay movie)
         {
-            if (movie == null) return;
+            if (movie == null || string.IsNullOrWhiteSpace(movie.TitleId)) return;
 
-            // TEMP: just prove it's working
-            MessageBox.Show($"Clicked: {movie.PrimaryTitle}");
-
-            // TODO: replace this with real navigation
+            _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Movie, movie.TitleId));
         }
     }
 }

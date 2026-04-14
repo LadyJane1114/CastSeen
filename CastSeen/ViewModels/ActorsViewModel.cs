@@ -14,6 +14,8 @@ namespace CastSeen.ViewModels
 {
     internal class ActorsViewModel :INotifyPropertyChanged
     {
+        private readonly MainViewModel _mainViewModel;
+
         public ObservableCollection<ActorDisplay> Actors { get; } = new ObservableCollection<ActorDisplay>();
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -25,8 +27,9 @@ namespace CastSeen.ViewModels
         public ICommand PreviousPageCommand { get; }
         public ICommand OpenActorCommand { get; }
 
-        public ActorsViewModel()
+        public ActorsViewModel(MainViewModel mainViewModel)
         {
+            _mainViewModel = mainViewModel;
             NextPageCommand = new RelayCommand(NextPage, CanNextPage);
             PreviousPageCommand = new RelayCommand(PreviousPage, CanPreviousPage);
             OpenActorCommand = new RelayCommand<ActorDisplay>(OpenActor);
@@ -112,12 +115,9 @@ namespace CastSeen.ViewModels
 
         private void OpenActor(ActorDisplay actor)
         {
-            if (actor == null) return;
+            if (actor == null || string.IsNullOrWhiteSpace(actor.NameId)) return;
 
-            // TEMP: just prove it's working
-            MessageBox.Show($"Clicked: {actor.Name} ({actor.NameId})");
-
-            // TODO: replace this with real navigation
+            _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Actor, actor.NameId));
         }
     }
 }
