@@ -117,23 +117,23 @@ namespace CastSeen.ViewModels
             }
         }
 
-        private void NextPage()
+        internal void NextPage()
         {
             _currentPage++;
             _ = LoadDataAsync();
         }
 
-        private bool CanNextPage() => !IsLoading;
+        internal bool CanNextPage() => !IsLoading;
 
-        private void PreviousPage()
+        internal void PreviousPage()
         {
             _currentPage--;
             _ = LoadDataAsync();
         }
 
-        private bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
+        internal bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
 
-        private void OpenMovie(MovieDisplay movie)
+        internal void OpenMovie(MovieDisplay movie)
         {
             if (movie == null || string.IsNullOrWhiteSpace(movie.TitleId)) return;
 
