@@ -134,10 +134,10 @@ public sealed class CastSeenUnitTests
     [TestMethod]
     public void ActorsViewModel_CanPreviousPage_ReturnsFalseOnFirstPage()
     {
-        var viewModel = CreateUninitializedActorsViewModel();
-        SetPrivateField(viewModel, "_currentPage", 0);
+        var viewModel = UnitTestHelpers.CreateUninitializedActorsViewModel();
+        UnitTestHelpers.SetPrivateField(viewModel, "_currentPage", 0);
 
-        var result = InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
+        var result = UnitTestHelpers.InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
 
         Assert.IsFalse(result);
     }
@@ -145,29 +145,19 @@ public sealed class CastSeenUnitTests
     [TestMethod]
     public void ActorsViewModel_CanPreviousPage_ReturnsTrueAfterPagingBack()
     {
-        var viewModel = CreateUninitializedActorsViewModel();
-        SetPrivateField(viewModel, "_currentPage", 1);
+        var viewModel = UnitTestHelpers.CreateUninitializedActorsViewModel();
+        UnitTestHelpers.SetPrivateField(viewModel, "_currentPage", 1);
 
-        var result = InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
+        var result = UnitTestHelpers.InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
 
         Assert.IsTrue(result);
     }
 
-    private static ActorsViewModel CreateUninitializedActorsViewModel()
-        => (ActorsViewModel)FormatterServices.GetUninitializedObject(typeof(ActorsViewModel));
-
-    private static void SetPrivateField<T>(object instance, string fieldName, T value)
+    [TestMethod]
+    public void ActorsViewModel_OpenActor_WithNullActor_DoesNotThrow()
     {
-        var field = instance.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
-        Assert.IsNotNull(field);
-        field.SetValue(instance, value);
-    }
+        var viewModel = UnitTestHelpers.CreateUninitializedActorsViewModel();
 
-    private static bool InvokePrivateBoolMethod(object instance, string methodName)
-    {
-        var method = instance.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
-        Assert.IsNotNull(method);
-
-        return (bool)method.Invoke(instance, null)!;
+        UnitTestHelpers.InvokePrivateVoidMethod(viewModel, "OpenActor", null);
     }
 }
