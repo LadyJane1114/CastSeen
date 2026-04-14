@@ -3,7 +3,6 @@ using CastSeen.Data;
 using CastSeen.Models;
 using CastSeen.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace CastSeen_UnitTest;
@@ -134,40 +133,36 @@ public sealed class CastSeenUnitTests
     [TestMethod]
     public void ActorsViewModel_CanPreviousPage_ReturnsFalseOnFirstPage()
     {
-        var viewModel = UnitTestHelpers.CreateUninitializedActorsViewModel();
+        var viewModel = UnitTestHelpers.CreateUninitialized<ActorsViewModel>();
         UnitTestHelpers.SetPrivateField(viewModel, "_currentPage", 0);
 
-        var result = UnitTestHelpers.InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
-
-        Assert.IsFalse(result);
+        Assert.IsFalse(viewModel.CanPreviousPage());
     }
 
     [TestMethod]
     public void ActorsViewModel_CanPreviousPage_ReturnsTrueAfterPagingBack()
     {
-        var viewModel = UnitTestHelpers.CreateUninitializedActorsViewModel();
+        var viewModel = UnitTestHelpers.CreateUninitialized<ActorsViewModel>();
         UnitTestHelpers.SetPrivateField(viewModel, "_currentPage", 1);
 
-        var result = UnitTestHelpers.InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
-
-        Assert.IsTrue(result);
+        Assert.IsTrue(viewModel.CanPreviousPage());
     }
 
     [TestMethod]
     public void ActorsViewModel_OpenActor_WithNullActor_DoesNotThrow()
     {
-        var viewModel = UnitTestHelpers.CreateUninitializedActorsViewModel();
+        var viewModel = UnitTestHelpers.CreateUninitialized<ActorsViewModel>();
 
-        UnitTestHelpers.InvokePrivateVoidMethod(viewModel, "OpenActor", new object?[] { null });
+        viewModel.OpenActor(null);
     }
 
     [TestMethod]
     public void ActorsViewModel_OpenActor_WithEmptyNameId_DoesNotThrow()
     {
-        var viewModel = UnitTestHelpers.CreateUninitializedActorsViewModel();
+        var viewModel = UnitTestHelpers.CreateUninitialized<ActorsViewModel>();
         var actor = new ActorsViewModel.ActorDisplay { NameId = "" };
 
-        UnitTestHelpers.InvokePrivateVoidMethod(viewModel, "OpenActor", actor);
+        viewModel.OpenActor(actor);
     }
 
     [TestMethod]
@@ -198,7 +193,7 @@ public sealed class CastSeenUnitTests
     [TestMethod]
     public void MainViewModel_Return_PopsHistory()
     {
-        var viewModel = (MainViewModel)FormatterServices.GetUninitializedObject(typeof(MainViewModel));
+        var viewModel = UnitTestHelpers.CreateUninitialized<MainViewModel>();
         var history = new Stack<object>();
         var previous = new object();
         history.Push(previous);
@@ -206,7 +201,7 @@ public sealed class CastSeenUnitTests
         UnitTestHelpers.SetPrivateField(viewModel, "_history", history);
         UnitTestHelpers.SetPrivateField(viewModel, "_currentViewModel", new object());
 
-        UnitTestHelpers.InvokePrivateVoidMethod(viewModel, "Return");
+        viewModel.Return();
 
         Assert.AreSame(previous, viewModel.CurrentViewModel);
     }
@@ -214,7 +209,7 @@ public sealed class CastSeenUnitTests
     [TestMethod]
     public void MainViewModel_Navigate_PushesCurrentViewModelAndReplacesIt()
     {
-        var viewModel = (MainViewModel)FormatterServices.GetUninitializedObject(typeof(MainViewModel));
+        var viewModel = UnitTestHelpers.CreateUninitialized<MainViewModel>();
         var history = new Stack<object>();
         var current = new object();
         var next = new object();
@@ -222,10 +217,7 @@ public sealed class CastSeenUnitTests
         UnitTestHelpers.SetPrivateField(viewModel, "_history", history);
         UnitTestHelpers.SetPrivateField(viewModel, "_currentViewModel", current);
 
-        var navigateMethod = typeof(MainViewModel).GetMethod("Navigate", BindingFlags.Instance | BindingFlags.NonPublic);
-        Assert.IsNotNull(navigateMethod);
-
-        navigateMethod.Invoke(viewModel, new object[] { new Func<object>(() => next) });
+        viewModel.Navigate(() => next);
 
         Assert.AreSame(current, history.Peek());
         Assert.AreSame(next, viewModel.CurrentViewModel);
@@ -253,22 +245,18 @@ public sealed class CastSeenUnitTests
     [TestMethod]
     public void MoviesViewModel_CanPreviousPage_ReturnsFalseOnFirstPage()
     {
-        var viewModel = (MoviesViewModel)FormatterServices.GetUninitializedObject(typeof(MoviesViewModel));
+        var viewModel = UnitTestHelpers.CreateUninitialized<MoviesViewModel>();
         UnitTestHelpers.SetPrivateField(viewModel, "_currentPage", 0);
 
-        var result = UnitTestHelpers.InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
-
-        Assert.IsFalse(result);
+        Assert.IsFalse(viewModel.CanPreviousPage());
     }
 
     [TestMethod]
     public void MoviesViewModel_CanPreviousPage_ReturnsTrueAfterPagingForward()
     {
-        var viewModel = (MoviesViewModel)FormatterServices.GetUninitializedObject(typeof(MoviesViewModel));
+        var viewModel = UnitTestHelpers.CreateUninitialized<MoviesViewModel>();
         UnitTestHelpers.SetPrivateField(viewModel, "_currentPage", 1);
 
-        var result = UnitTestHelpers.InvokePrivateBoolMethod(viewModel, "CanPreviousPage");
-
-        Assert.IsTrue(result);
+        Assert.IsTrue(viewModel.CanPreviousPage());
     }
 }

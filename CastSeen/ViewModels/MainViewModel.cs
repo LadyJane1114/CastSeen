@@ -90,7 +90,7 @@ namespace CastSeen.ViewModels
             Navigate(() => new DetailsViewModel(this, request));
         }
 
-        private void Navigate(Func<object> createView)
+        internal void Navigate(Func<object> createView)
         {
             if (CurrentViewModel != null)
                 _history.Push(CurrentViewModel);
@@ -109,7 +109,7 @@ namespace CastSeen.ViewModels
             }
         }
 
-        private void Return()
+        internal void Return()
         {
             if (_history.Count > 0)
                 CurrentViewModel = _history.Pop();
