@@ -164,29 +164,7 @@ namespace CastSeen.ViewModels
             _ = SearchAsync(SearchQuery);
         }
 
-        private void NextPage()
-        {
-            _currentPage++;
-            _ = LoadDataAsync();
-        }
-
-        private bool CanNextPage() => !IsLoading && MatchingMovies >= PageSize;
-
-        private void PreviousPage()
-        {
-            _currentPage--;
-            _ = LoadDataAsync();
-        }
-
-        private bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
-
-        private void OpenMovie(MovieDisplay movie)
-        {
-            if (movie == null || string.IsNullOrWhiteSpace(movie.TitleId)) return;
-
-            _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Movie, movie.TitleId));
-        }
-        
+      
         private void SelectGenre(string genre)
         {
             SelectedGenre = genre;
@@ -277,6 +255,29 @@ namespace CastSeen.ViewModels
             {
                 IsLoading = false;
             }
+        }
+
+        internal void NextPage()
+        {
+            _currentPage++;
+            _ = LoadDataAsync();
+        }
+
+        internal bool CanNextPage() => !IsLoading && MatchingMovies >= PageSize;
+
+        internal void PreviousPage()
+        {
+            _currentPage--;
+            _ = LoadDataAsync();
+        }
+
+        internal bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
+
+        internal void OpenMovie(MovieDisplay movie)
+        {
+            if (movie == null || string.IsNullOrWhiteSpace(movie.TitleId)) return;
+
+            _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Movie, movie.TitleId));
         }
     }
 }

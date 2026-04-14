@@ -105,30 +105,7 @@ namespace CastSeen.ViewModels
 
             _ = SearchAsync(SearchQuery);
         }
-
-        private void NextPage()
-        {
-            _currentPage++;
-            _ = LoadDataAsync();
-        }
-
-        private bool CanNextPage() => !IsLoading && MatchingActors >= PageSize;
-
-        private void PreviousPage()
-        {
-            _currentPage--;
-            _ = LoadDataAsync();
-        }
-
-        private bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
-
-        private void OpenActor(ActorDisplay actor)
-        {
-            if (actor == null || string.IsNullOrWhiteSpace(actor.NameId)) return;
-
-            _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Actor, actor.NameId));
-        }
-
+        
         public async System.Threading.Tasks.Task SearchAsync(string searchTerm)
         {
             _searchTerm = searchTerm;
@@ -174,6 +151,29 @@ namespace CastSeen.ViewModels
             {
                 IsLoading = false;
             }
+        }
+
+        internal void NextPage()
+        {
+            _currentPage++;
+            _ = LoadDataAsync();
+        }
+
+        internal bool CanNextPage() => !IsLoading && MatchingActors >= PageSize;
+
+        internal void PreviousPage()
+        {
+            _currentPage--;
+            _ = LoadDataAsync();
+        }
+
+        internal bool CanPreviousPage() => _currentPage > 0 && !IsLoading;
+
+        internal void OpenActor(ActorDisplay actor)
+        {
+            if (actor == null || string.IsNullOrWhiteSpace(actor.NameId)) return;
+
+            _mainViewModel.NavigateToDetails(new DetailsNavigationRequest(DetailsTargetType.Actor, actor.NameId));
         }
     }
 }
