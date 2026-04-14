@@ -1,4 +1,5 @@
-﻿using CastSeen.ViewModels;
+﻿using CastSeen.Commands;
+using CastSeen.ViewModels;
 using System.Reflection;
 using System.Runtime.Serialization;
 
@@ -14,6 +15,13 @@ internal static class UnitTestHelpers
         var field = instance.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.IsNotNull(field);
         field.SetValue(instance, value);
+    }
+    public static MainViewModel CreateMainViewModelWithReturnCommand()
+    {
+        var mainViewModel = UnitTestHelpers.CreateUninitialized<MainViewModel>();
+        var returnCommand = new RelayCommand(() => { });
+        UnitTestHelpers.SetPrivateField(mainViewModel, "<ReturnCommand>k__BackingField", returnCommand);
+        return mainViewModel;
     }
 }
 
