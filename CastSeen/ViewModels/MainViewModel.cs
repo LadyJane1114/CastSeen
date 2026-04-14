@@ -49,8 +49,8 @@ namespace CastSeen.ViewModels
         public MainViewModel()
         {
             NavToHomeCommand = new RelayCommand(() => Navigate(() => new HomeViewModel(this)));
-            NavToMoviesCommand = new RelayCommand(() => Navigate(() => new MoviesViewModel()));
-            NavToActorsCommand = new RelayCommand(() => Navigate(() => new ActorsViewModel()));
+            NavToMoviesCommand = new RelayCommand(() => Navigate(() => new MoviesViewModel(this)));
+            NavToActorsCommand = new RelayCommand(() => Navigate(() => new ActorsViewModel(this)));
             ReturnCommand = new RelayCommand(() => Return());
             ExitCommand = new RelayCommand(() => App.Current.Shutdown());
 
@@ -85,6 +85,10 @@ namespace CastSeen.ViewModels
         public ICommand ReturnCommand { get; }
         public ICommand ExitCommand { get; }
 
+        public void NavigateToDetails(DetailsNavigationRequest request)
+        {
+            Navigate(() => new DetailsViewModel(this, request));
+        }
 
         private void Navigate(Func<object> createView)
         {

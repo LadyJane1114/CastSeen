@@ -7,10 +7,7 @@
              xmlns:vm="clr-namespace:CastSeen.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <vm:ActorsViewModel/>
-    </UserControl.DataContext>
-    
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -20,6 +17,10 @@
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Explore Profiles" Foreground="{StaticResource col_muted_foreground}" FontFamily="{StaticResource font_text}" FontSize="14"/>
             <TextBlock Text="Actors" FontSize="38" Foreground="{StaticResource col_foreground}" FontFamily="{StaticResource font_headers}"/>
+            <TextBlock Text="Loading actors..."
+                       Visibility="{Binding LoadingVisibility}"
+                       Foreground="{StaticResource col_muted_foreground}"
+                       Margin="0,6,0,0"/>
             <Border Height="1" Background="{StaticResource col_muted}" Margin="16,5"/>
         </StackPanel>
 
