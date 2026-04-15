@@ -3,6 +3,7 @@ using CastSeen.Data;
 using CastSeen.Models;
 using CastSeen.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Input;
@@ -167,6 +168,7 @@ public sealed class CastSeenUnitTests
     {
         var viewModel = UnitTestHelpers.CreateUninitialized<ActorsViewModel>();
         UnitTestHelpers.SetPrivateField(viewModel, "_isLoading", true);
+        UnitTestHelpers.SetPrivateField(viewModel, "<Actors>k__BackingField", new ObservableCollection<ActorsViewModel.ActorDisplay>());
 
         Assert.IsFalse(viewModel.CanNextPage());
     }
@@ -177,6 +179,14 @@ public sealed class CastSeenUnitTests
     {
         var viewModel = UnitTestHelpers.CreateUninitialized<ActorsViewModel>();
         UnitTestHelpers.SetPrivateField(viewModel, "_isLoading", false);
+
+        var actors = new ObservableCollection<ActorsViewModel.ActorDisplay>();
+        for (var i = 0; i < 50; i++)
+        {
+            actors.Add(new ActorsViewModel.ActorDisplay { NameId = $"nm{i}", Name = $"Actor {i}" });
+        }
+
+        UnitTestHelpers.SetPrivateField(viewModel, "<Actors>k__BackingField", actors);
 
         Assert.IsTrue(viewModel.CanNextPage());
     }
@@ -310,6 +320,7 @@ public sealed class CastSeenUnitTests
     {
         var viewModel = UnitTestHelpers.CreateUninitialized<MoviesViewModel>();
         UnitTestHelpers.SetPrivateField(viewModel, "_isLoading", true);
+        UnitTestHelpers.SetPrivateField(viewModel, "<Movies>k__BackingField", new ObservableCollection<MoviesViewModel.MovieDisplay>());
 
         Assert.IsFalse(viewModel.CanNextPage());
     }
@@ -320,6 +331,14 @@ public sealed class CastSeenUnitTests
     {
         var viewModel = UnitTestHelpers.CreateUninitialized<MoviesViewModel>();
         UnitTestHelpers.SetPrivateField(viewModel, "_isLoading", false);
+
+        var movies = new ObservableCollection<MoviesViewModel.MovieDisplay>();
+        for (var i = 0; i < 50; i++)
+        {
+            movies.Add(new MoviesViewModel.MovieDisplay { TitleId = $"tt{i}", PrimaryTitle = $"Movie {i}" });
+        }
+
+        UnitTestHelpers.SetPrivateField(viewModel, "<Movies>k__BackingField", movies);
 
         Assert.IsTrue(viewModel.CanNextPage());
     }
