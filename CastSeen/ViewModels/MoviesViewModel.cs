@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
@@ -24,6 +25,7 @@ namespace CastSeen.ViewModels
 
         private int _currentPage = 0;
         private const int PageSize = 50;
+        private int _searchVersion;
         /*Actors count and reducers*/
         public int MatchingMovies => Movies.Count;
         private int _totalMovies = 0;
@@ -188,10 +190,19 @@ namespace CastSeen.ViewModels
 
         public async Task SearchAsync(string searchTerm)
         {
+            var version = Interlocked.Increment(ref _searchVersion);
             _searchTerm = searchTerm;
             IsLoading = true;
+            Movies.Clear();
+            TotalMovies = 0;
+            OnPropertyChanged(nameof(MatchingMovies));
+
             try
             {
+                await Task.Delay(250);
+                if (version != _searchVersion)
+                    return;
+
                 using var context = new ImdbContext();
                 var query = context.Titles
                     .AsNoTracking()
@@ -216,6 +227,7 @@ namespace CastSeen.ViewModels
                         : query.OrderBy(t => t.PrimaryTitle)
                 };
 
+                TotalMovies = await query.CountAsync();
                 var movies = await query
                     .Skip(_currentPage * PageSize)
                     .Take(PageSize)
@@ -243,8 +255,9 @@ namespace CastSeen.ViewModels
                     })
                     .ToListAsync();
 
-                Movies.Clear();
-                TotalMovies = await query.CountAsync();
+                if (version != _searchVersion)
+                    return;
+
                 foreach (var movie in movies)
                 {
                     Movies.Add(movie);
@@ -253,7 +266,8 @@ namespace CastSeen.ViewModels
             }
             finally
             {
-                IsLoading = false;
+                if (version == _searchVersion)
+                    IsLoading = false;
             }
         }
 

@@ -2,7 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.openxmlformats.org/expression/blend/2008" 
              xmlns:local="clr-namespace:CastSeen.Views"
              xmlns:vm="clr-namespace:CastSeen.ViewModels"
              xmlns:helper="clr-namespace:CastSeen.Helpers"
@@ -12,7 +12,7 @@
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -34,23 +34,22 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <!--Grey area behind search-->
-                <Border Padding="10, 0" Background="{StaticResource col_muted}" Margin="0,0,10,0">
+                <Border Padding="10" Background="{StaticResource col_muted}" Margin="0,0,10,0" VerticalAlignment="Center">
                     <StackPanel x:Name="SearchStackPanel" Orientation="Vertical" VerticalAlignment="Center">
                         <TextBox helper:TextBoxHelper.Placeholder="Search movie by title...."
                                  Style="{StaticResource ResourceKey=SearchBarStyle}"
                                  x:Name="SearchBar" 
                                  Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="30" Width="200"/>
+                                 Height="32" MinWidth="200" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Border>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <Button Content="All"
                             Command="{Binding SelectGenreCommand}"
                             CommandParameter="All Genres"
-                            Style="{StaticResource FilterButtonStyle}"
-                            />
+                            Style="{StaticResource FilterButtonStyle}"/>
 
                     <ItemsControl ItemsSource="{Binding TopGenres}">
                         <ItemsControl.ItemsPanel>
@@ -76,181 +75,168 @@
                               ItemContainerStyle="{StaticResource MovieComboBoxItemStyle}"/>
                 </StackPanel>
             </StackPanel>
-
-
         </Grid>
 
-        <StackPanel Grid.Row="2" Orientation="Vertical">
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
             <Grid>
-              <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="2*"></ColumnDefinition>
-                  <ColumnDefinition Width="*"></ColumnDefinition>
-              </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
             
-            <!--Showing x of y movies-->
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
-                <TextBlock Text="Showing: " Foreground="{StaticResource col_muted_foreground}"/>
-                <!--Data-->
-                <TextBlock Text="{Binding Path=MatchingMovies}"
-                           VerticalAlignment="Center"
-                           Foreground="{StaticResource col_foreground}"/>
-                <TextBlock Text=" of " Foreground="{StaticResource col_muted_foreground}"/>
-                <!--Data-->
-                <TextBlock Text="{Binding Path=TotalMovies}" VerticalAlignment="Center" 
-                           Foreground="{StaticResource col_foreground}"/>
-                <TextBlock Text=" Movies." Foreground="{StaticResource col_muted_foreground}"/>
-            </StackPanel>
+                <!--Showing x of y movies-->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                    <TextBlock Text="Showing: " Foreground="{StaticResource col_muted_foreground}"/>
+                    <!--Data-->
+                    <TextBlock Text="{Binding Path=MatchingMovies}"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource col_foreground}"/>
+                    <TextBlock Text=" of " Foreground="{StaticResource col_muted_foreground}"/>
+                    <!--Data-->
+                    <TextBlock Text="{Binding Path=TotalMovies}" VerticalAlignment="Center" 
+                               Foreground="{StaticResource col_foreground}"/>
+                    <TextBlock Text=" Movies." Foreground="{StaticResource col_muted_foreground}"/>
+                </StackPanel>
             
-            <!--Sort by fields-->
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <TextBlock Text="Sort by: " Foreground="{StaticResource col_muted_foreground}"/>
-                <Button Content="Rating " 
-                        Command="{Binding SortCommand}" 
-                        CommandParameter="Rating"
-                        Style="{StaticResource FilterButtonStyle}"
-                        Padding="5,0"/>
-                <TextBlock Text=" | " Foreground="{StaticResource col_muted_foreground}"/>
-                <Button Content=" Year " 
-                        Command="{Binding SortCommand}" 
-                        CommandParameter="Year"
-                        Style="{StaticResource FilterButtonStyle}"
-                        Padding="5,0"/>
-                <TextBlock Text=" | " Foreground="{StaticResource col_muted_foreground}"/>
-                <Button Content="Title" 
-                        Command="{Binding SortCommand}" 
-                        CommandParameter="Title"
-                        Style="{StaticResource FilterButtonStyle}"
-                        Padding="5,0"/>
-            </StackPanel>
+                <!--Sort by fields-->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="Sort by: " Foreground="{StaticResource col_muted_foreground}"/>
+                    <Button Content="Rating " 
+                            Command="{Binding SortCommand}" 
+                            CommandParameter="Rating"
+                            Style="{StaticResource FilterButtonStyle}"
+                            Padding="5,0"/>
+                    <TextBlock Text=" | " Foreground="{StaticResource col_muted_foreground}"/>
+                    <Button Content=" Year " 
+                            Command="{Binding SortCommand}" 
+                            CommandParameter="Year"
+                            Style="{StaticResource FilterButtonStyle}"
+                            Padding="5,0"/>
+                    <TextBlock Text=" | " Foreground="{StaticResource col_muted_foreground}"/>
+                    <Button Content="Title" 
+                            Command="{Binding SortCommand}" 
+                            CommandParameter="Title"
+                            Style="{StaticResource FilterButtonStyle}"
+                            Padding="5,0"/>
+                </StackPanel>
             </Grid>
-        <ListBox ItemsSource="{Binding Movies}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" 
-                            Value="Stretch"/>
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="0"/>
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Button Command="{Binding DataContext.OpenMovieCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                            CommandParameter="{Binding}"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch"
-                            VerticalAlignment="Stretch">
-                        <Border Background="{StaticResource col_card}"
-                                Margin="0,0,10,10"
-                                Padding="10"
-                                CornerRadius="8"
-                                HorizontalAlignment="Stretch">
-                            <Grid>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="110"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="120"/>
-                                </Grid.ColumnDefinitions>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Movies}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Margin" Value="0"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Command="{Binding DataContext.OpenMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalAlignment="Stretch">
+                                <Border Background="{StaticResource col_card}"
+                                        Margin="0,0,10,10"
+                                        Padding="10"
+                                        CornerRadius="8"
+                                        HorizontalAlignment="Stretch">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="110"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="120"/>
+                                        </Grid.ColumnDefinitions>
 
-                                
-                                <Border Width="100"
-                                        Height="140"
-                                        Background="{StaticResource col_muted}"
-                                        CornerRadius="6"
-                                        HorizontalAlignment="Left">
+                                        <Border Width="100"
+                                                Height="140"
+                                                Background="{StaticResource col_muted}"
+                                                CornerRadius="6"
+                                                HorizontalAlignment="Left">
+                                            <Path Data="{StaticResource icon_film}"
+                                                  Width="28"
+                                                  Height="28"
+                                                  Stretch="Uniform"
+                                                  Fill="{StaticResource col_muted_foreground}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                        </Border>
 
-                                    <Path Data="{StaticResource icon_film}"
-                                          Width="28"
-                                          Height="28"
-                                          Stretch="Uniform"
-                                          Fill="{StaticResource col_muted_foreground}"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="1" Margin="10,0,10,0" VerticalAlignment="Center">
+                                            <TextBlock FontFamily="{StaticResource font_text}" TextWrapping="Wrap" Foreground="{StaticResource col_accent}">
+                                                <Run Text="{Binding PrimaryTitle}" FontSize="16" Foreground="{StaticResource col_foreground}"/>
+                                                <Run Text=" (" FontSize="12"/>
+                                                <Run Text="{Binding StartYear}" FontSize="12"/>
+                                                <Run Text=")" FontSize="12"/>
+                                            </TextBlock>
+
+                                            <ItemsControl ItemsSource="{Binding Genres}" Margin="0,6,0,0">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding}"
+                                                                   FontSize="12"
+                                                                   Foreground="{StaticResource col_accent}"
+                                                                   Margin="0,0,6,0"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+
+                                            <ItemsControl ItemsSource="{Binding TopActors}" Margin="0,8,0,0">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Background="#22FFFFFF"
+                                                                Padding="4,2"
+                                                                Margin="0,0,5,0"
+                                                                CornerRadius="4">
+                                                            <TextBlock Text="{Binding}"
+                                                                       FontSize="11"
+                                                                       Foreground="{StaticResource col_foreground}"/>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                            <Path Data="{StaticResource icon_star}"
+                                                  Fill="{StaticResource col_primary}"
+                                                  Width="20"
+                                                  Height="20"
+                                                  Stretch="Uniform"
+                                                  Margin="0,0,5,0"/>
+
+                                            <TextBlock Text="{Binding Rating}"
+                                                       FontSize="20"
+                                                       Foreground="{StaticResource col_foreground}"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Grid>
                                 </Border>
-
-                                <StackPanel Grid.Column="1"
-                                            Margin="10,0,10,0"
-                                            VerticalAlignment="Center">
-
-                                    <TextBlock FontFamily="{StaticResource font_text}"
-                                               TextWrapping="Wrap" Foreground="{StaticResource col_accent}">
-
-                                        <Run Text="{Binding PrimaryTitle}" 
-                                             FontSize="16" 
-                                             Foreground="{StaticResource col_foreground}"/>
-                                        <Run Text=" (" FontSize="12"/>
-                                        <Run Text="{Binding StartYear}" FontSize="12"/>
-                                        <Run Text=")" FontSize="12"/>
-                                    </TextBlock>
-
-                                    <ItemsControl ItemsSource="{Binding Genres}" Margin="0,6,0,0">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding}"
-                                                           FontSize="12"
-                                                           Foreground="{StaticResource col_accent}"
-                                                           Margin="0,0,6,0"/>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-
-                                    <ItemsControl ItemsSource="{Binding TopActors}" Margin="0,8,0,0">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border Background="#22FFFFFF"
-                                                        Padding="4,2"
-                                                        Margin="0,0,5,0"
-                                                        CornerRadius="4">
-                                                    <TextBlock Text="{Binding}"
-                                                               FontSize="11"
-                                                               Foreground="{StaticResource col_foreground}"/>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-
-                                </StackPanel>
-
-                                <!-- RATING -->
-                                <StackPanel Grid.Column="2"
-                                            Orientation="Horizontal"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center">
-
-                                    <Path Data="{StaticResource icon_star}"
-                                          Fill="{StaticResource col_primary}"
-                                          Width="20"
-                                          Height="20"
-                                          Stretch="Uniform"
-                                          Margin="0,0,5,0"/>
-
-                                    <TextBlock Text="{Binding Rating}"
-                                               FontSize="20"
-                                               Foreground="{StaticResource col_foreground}"
-                                               VerticalAlignment="Center"/>
-                                </StackPanel>
-
-                            </Grid>
-                        </Border>
-                    </Button>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+        
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
             <Button Content="Previous 50" Command="{Binding PreviousPageCommand}" Style="{StaticResource HomeDarkButtonStyle}" Cursor="Hand" Margin="5,0"/>
             <Button Content="Next 50" Command="{Binding NextPageCommand}" Style="{StaticResource HomePrimaryButtonStyle}" Cursor="Hand" Margin="5,0"/>
